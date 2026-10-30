@@ -1,0 +1,1909 @@
+<!DOCTYPE html>
+<html lang="en" class="h-full bg-[#fbfbfa]">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>PitchCraft AI — AI-Powered Email Outreach for Job Seekers</title>
+  
+  <!-- Inter Font -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  
+  <!-- Lucide Icons -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['Inter', '-apple-system', 'BlinkMacSystemFont', 'Segoe UI', 'Roboto', 'sans-serif'],
+          },
+          colors: {
+            brand: {
+              50: '#eef2ff',
+              100: '#e0e7ff',
+              200: '#c7d2fe',
+              300: '#a5b4fc',
+              400: '#818cf8',
+              500: '#6366f1',
+              600: '#4f46e5', // Deep Indigo primary
+              700: '#4338ca',
+              800: '#3730a3',
+              900: '#312e81',
+              950: '#1e1b4b',
+            },
+            surface: {
+              bg: '#fbfbfa',
+              subtle: '#f4f4f2',
+              card: '#ffffff',
+              border: '#e5e7eb',
+              'border-subtle': '#f0f0ee',
+            }
+          },
+          boxShadow: {
+            'subtle': '0 1px 2px 0 rgba(0, 0, 0, 0.03)',
+            'card': '0 1px 3px 0 rgba(0, 0, 0, 0.04), 0 1px 2px -1px rgba(0, 0, 0, 0.02)',
+            'card-hover': '0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -2px rgba(0, 0, 0, 0.03)',
+            'dropdown': '0 10px 15px -3px rgba(0, 0, 0, 0.06), 0 4px 6px -4px rgba(0, 0, 0, 0.04)',
+          }
+        }
+      }
+    }
+  </script>
+
+  <style>
+    /* Custom scrollbar matching Linear/Stripe */
+    ::-webkit-scrollbar {
+      width: 5px;
+      height: 5px;
+    }
+    ::-webkit-scrollbar-track {
+      background: transparent;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: #e2e8f0;
+      border-radius: 9999px;
+    }
+    ::-webkit-scrollbar-thumb:hover {
+      background: #cbd5e1;
+    }
+    
+    /* Smooth transitions */
+    .view-transition {
+      animation: fadeIn 0.18s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(4px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    [contenteditable]:empty:before {
+      content: attr(data-placeholder);
+      color: #94a3b8;
+      pointer-events: none;
+      display: block;
+    }
+  </style>
+</head>
+<body class="h-full text-slate-800 antialiased font-sans flex flex-col md:flex-row overflow-hidden bg-[#fbfbfa]">
+
+  <!-- Mobile Header Bar -->
+  <div class="md:hidden flex items-center justify-between p-4 bg-white border-b border-slate-200">
+    <div class="flex items-center gap-2.5">
+      <div class="w-7 h-7 rounded-lg bg-brand-600 text-white flex items-center justify-center font-bold text-sm">P</div>
+      <span class="font-semibold text-slate-900 tracking-tight">PitchCraft AI</span>
+    </div>
+    <button id="mobile-menu-toggle" class="p-1.5 rounded-lg text-slate-600 hover:bg-slate-100">
+      <i data-lucide="menu" class="w-5 h-5"></i>
+    </button>
+  </div>
+
+  <!-- ================= 1. SIDEBAR NAVIGATION ================= -->
+  <aside id="sidebar" class="fixed md:static inset-y-0 left-0 z-40 w-64 bg-white border-r border-slate-200/80 flex flex-col justify-between transition-transform duration-200 -translate-x-full md:translate-x-0">
+    <div>
+      <!-- Brand Logo -->
+      <div class="h-16 flex items-center justify-between px-5 border-b border-slate-100">
+        <div class="flex items-center gap-2.5">
+          <div class="w-8 h-8 rounded-lg bg-brand-600 text-white flex items-center justify-center shadow-sm font-semibold text-sm">
+            <i data-lucide="sparkles" class="w-4 h-4"></i>
+          </div>
+          <div class="flex flex-col">
+            <span class="font-semibold text-[15px] text-slate-900 tracking-tight leading-tight">PitchCraft AI</span>
+            <span class="text-[11px] text-slate-400 font-medium">Outreach Studio</span>
+          </div>
+        </div>
+        <span class="text-[10px] font-semibold uppercase tracking-wider text-brand-700 bg-brand-50 px-2 py-0.5 rounded-md border border-brand-200/60">PRO</span>
+      </div>
+
+      <!-- Quick Action Compose CTA -->
+      <div class="p-3">
+        <button onclick="navigateTo('compose')" class="w-full flex items-center justify-center gap-2 py-2 px-3.5 bg-brand-600 hover:bg-brand-700 text-white font-medium text-xs rounded-lg shadow-sm transition-all duration-150 focus:ring-2 focus:ring-brand-500/20 active:scale-[0.99]">
+          <i data-lucide="pen-square" class="w-3.5 h-3.5"></i>
+          <span>Compose Email</span>
+        </button>
+      </div>
+
+      <!-- Navigation Links -->
+      <nav class="px-2.5 space-y-0.5 text-xs font-medium">
+        <button onclick="navigateTo('dashboard')" id="nav-dashboard" class="nav-item w-full flex items-center justify-between px-3 py-2 rounded-lg text-slate-600 hover:text-slate-900 hover:bg-slate-50 transition-colors">
+          <div class="flex items-center gap-2.5">
+            <i data-lucide="layout-dashboard" class="w-4 h-4 text-slate-400"></i>
+            <span>Dashboard</span>
+          </div>
+        </button>
+
+        <button onclick="navigateTo('compose')" id="nav-compose" class="nav-item w-full flex items-center justify-between px-3 py-2 rounded-lg text-slate-600 hover:text-slate-900 hover:bg-slate-50 transition-colors">
+          <div class="flex items-center gap-2.5">
+            <i data-lucide="mail-plus" class="w-4 h-4 text-slate-400"></i>
+            <span>Compose Email</span>
+          </div>
+          <span class="text-[10px] bg-brand-50 text-brand-600 font-semibold px-1.5 py-0.5 rounded">AI</span>
+        </button>
+
+        <button onclick="navigateTo('history')" id="nav-history" class="nav-item w-full flex items-center justify-between px-3 py-2 rounded-lg text-slate-600 hover:text-slate-900 hover:bg-slate-50 transition-colors">
+          <div class="flex items-center gap-2.5">
+            <i data-lucide="history" class="w-4 h-4 text-slate-400"></i>
+            <span>Email History</span>
+          </div>
+          <span id="sidebar-history-count" class="text-[11px] text-slate-400">142</span>
+        </button>
+
+        <button onclick="navigateTo('contacts')" id="nav-contacts" class="nav-item w-full flex items-center justify-between px-3 py-2 rounded-lg text-slate-600 hover:text-slate-900 hover:bg-slate-50 transition-colors">
+          <div class="flex items-center gap-2.5">
+            <i data-lucide="users" class="w-4 h-4 text-slate-400"></i>
+            <span>Contacts</span>
+          </div>
+          <span class="text-[11px] text-slate-400">28</span>
+        </button>
+
+        <button onclick="navigateTo('templates')" id="nav-templates" class="nav-item w-full flex items-center justify-between px-3 py-2 rounded-lg text-slate-600 hover:text-slate-900 hover:bg-slate-50 transition-colors">
+          <div class="flex items-center gap-2.5">
+            <i data-lucide="file-text" class="w-4 h-4 text-slate-400"></i>
+            <span>Templates</span>
+          </div>
+          <span class="text-[10px] bg-slate-100 text-slate-600 font-medium px-1.5 py-0.5 rounded">6</span>
+        </button>
+
+        <button onclick="navigateTo('analytics')" id="nav-analytics" class="nav-item w-full flex items-center justify-between px-3 py-2 rounded-lg text-slate-600 hover:text-slate-900 hover:bg-slate-50 transition-colors">
+          <div class="flex items-center gap-2.5">
+            <i data-lucide="bar-chart-3" class="w-4 h-4 text-slate-400"></i>
+            <span>Analytics</span>
+          </div>
+        </button>
+
+        <button onclick="navigateTo('settings')" id="nav-settings" class="nav-item w-full flex items-center justify-between px-3 py-2 rounded-lg text-slate-600 hover:text-slate-900 hover:bg-slate-50 transition-colors">
+          <div class="flex items-center gap-2.5">
+            <i data-lucide="settings" class="w-4 h-4 text-slate-400"></i>
+            <span>Settings</span>
+          </div>
+        </button>
+      </nav>
+    </div>
+
+    <!-- Bottom Profile & Subscription -->
+    <div class="p-3 border-t border-slate-100 bg-slate-50/50">
+      <div class="flex items-center justify-between p-2 rounded-lg bg-white border border-slate-200/60 shadow-subtle">
+        <div class="flex items-center gap-2.5 overflow-hidden">
+          <div class="w-8 h-8 rounded-full bg-brand-100 text-brand-700 font-semibold flex items-center justify-center text-xs border border-brand-200 shrink-0">
+            MS
+          </div>
+          <div class="truncate">
+            <p class="text-xs font-semibold text-slate-800 leading-tight truncate">Monu Shah</p>
+            <p class="text-[10px] text-slate-400 truncate">monushah108@gmail.com</p>
+          </div>
+        </div>
+        <button onclick="navigateTo('settings')" class="text-slate-400 hover:text-slate-600 p-1" title="Account settings">
+          <i data-lucide="more-horizontal" class="w-4 h-4"></i>
+        </button>
+      </div>
+
+      <!-- Plan Indicator -->
+      <div class="mt-2.5 px-2 flex items-center justify-between text-[11px] text-slate-500">
+        <div class="flex items-center gap-1.5">
+          <div class="w-1.5 h-1.5 rounded-full bg-emerald-500"></div>
+          <span>Pro Subscription</span>
+        </div>
+        <span class="font-medium text-slate-700">142/500 sent</span>
+      </div>
+    </div>
+  </aside>
+
+  <!-- ================= MAIN CONTENT AREA ================= -->
+  <main class="flex-1 flex flex-col h-full overflow-hidden bg-[#fbfbfa]">
+    
+    <!-- Top Header -->
+    <header class="h-14 border-b border-slate-200/70 bg-white/80 backdrop-blur-md px-6 flex items-center justify-between shrink-0">
+      <div class="flex items-center gap-2">
+        <span class="text-xs font-medium text-slate-400">Workspace</span>
+        <span class="text-xs text-slate-300">/</span>
+        <span id="current-view-title" class="text-xs font-semibold text-slate-800">Dashboard</span>
+      </div>
+
+      <div class="flex items-center gap-3">
+        <!-- Quick Global Search -->
+        <div class="relative hidden sm:block">
+          <i data-lucide="search" class="w-3.5 h-3.5 text-slate-400 absolute left-2.5 top-1/2 -translate-y-1/2 pointer-events-none"></i>
+          <input type="text" id="global-search" placeholder="Search emails, companies, contacts..." class="w-64 pl-8 pr-3 py-1.5 text-xs bg-slate-50 border border-slate-200 rounded-lg text-slate-700 placeholder-slate-400 focus:bg-white focus:outline-none focus:ring-1 focus:ring-brand-500 focus:border-brand-500 transition-all">
+        </div>
+
+        <!-- Notification Bell -->
+        <button class="relative p-1.5 text-slate-500 hover:text-slate-700 hover:bg-slate-100 rounded-lg transition-colors" title="Notifications">
+          <i data-lucide="bell" class="w-4 h-4"></i>
+          <span class="absolute top-1 right-1 w-2 h-2 bg-brand-500 rounded-full ring-2 ring-white"></span>
+        </button>
+
+        <div class="h-4 w-[1px] bg-slate-200"></div>
+
+        <!-- Feedback & Docs -->
+        <a href="https://github.com/monushah108/PitchCraft" target="_blank" class="flex items-center gap-1.5 text-xs text-slate-500 hover:text-slate-800 font-medium px-2 py-1 rounded-md hover:bg-slate-50">
+          <i data-lucide="github" class="w-3.5 h-3.5"></i>
+          <span class="hidden sm:inline">GitHub</span>
+        </a>
+      </div>
+    </header>
+
+    <!-- Scrollable Workspace Body -->
+    <div id="content-viewport" class="flex-1 overflow-y-auto p-6 md:p-8">
+
+      <!-- ================= 2. DASHBOARD VIEW ================= -->
+      <section id="view-dashboard" class="view-transition max-w-6xl mx-auto space-y-7">
+        <!-- Welcoming Greeting -->
+        <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 pb-2 border-b border-slate-200/60">
+          <div>
+            <h1 class="text-xl md:text-2xl font-semibold text-slate-900 tracking-tight">Good morning, Monu</h1>
+            <p class="text-xs md:text-sm text-slate-500 mt-0.5">Let's make your next career opportunity happen.</p>
+          </div>
+          <div class="flex items-center gap-2.5">
+            <button onclick="navigateTo('templates')" class="px-3 py-2 bg-white border border-slate-200 hover:bg-slate-50 text-slate-700 text-xs font-medium rounded-lg shadow-subtle transition-colors flex items-center gap-1.5">
+              <i data-lucide="file-text" class="w-3.5 h-3.5 text-slate-500"></i>
+              <span>Browse Templates</span>
+            </button>
+            <button onclick="navigateTo('compose')" class="px-3.5 py-2 bg-brand-600 hover:bg-brand-700 text-white text-xs font-medium rounded-lg shadow-sm transition-all flex items-center gap-1.5">
+              <i data-lucide="plus" class="w-3.5 h-3.5"></i>
+              <span>Create New Email</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- Statistics Cards Grid (4 Compact Cards) -->
+        <div class="grid grid-cols-2 lg:grid-cols-4 gap-4">
+          <!-- Card 1 -->
+          <div class="bg-white p-4 rounded-xl border border-slate-200/80 shadow-card">
+            <div class="flex items-center justify-between text-slate-500 mb-2">
+              <span class="text-xs font-medium">Total Emails Sent</span>
+              <div class="w-7 h-7 rounded-md bg-indigo-50 text-brand-600 flex items-center justify-center">
+                <i data-lucide="send" class="w-3.5 h-3.5"></i>
+              </div>
+            </div>
+            <div class="flex items-baseline gap-2">
+              <span id="stat-total-sent" class="text-2xl font-bold text-slate-900">142</span>
+              <span class="text-[11px] font-semibold text-emerald-600 bg-emerald-50 px-1.5 py-0.5 rounded">+14%</span>
+            </div>
+            <span class="text-[11px] text-slate-400 mt-1 block">vs. 124 last month</span>
+          </div>
+
+          <!-- Card 2 -->
+          <div class="bg-white p-4 rounded-xl border border-slate-200/80 shadow-card">
+            <div class="flex items-center justify-between text-slate-500 mb-2">
+              <span class="text-xs font-medium">Emails Generated</span>
+              <div class="w-7 h-7 rounded-md bg-purple-50 text-purple-600 flex items-center justify-center">
+                <i data-lucide="sparkles" class="w-3.5 h-3.5"></i>
+              </div>
+            </div>
+            <div class="flex items-baseline gap-2">
+              <span id="stat-generated" class="text-2xl font-bold text-slate-900">189</span>
+              <span class="text-[11px] font-semibold text-emerald-600 bg-emerald-50 px-1.5 py-0.5 rounded">+22%</span>
+            </div>
+            <span class="text-[11px] text-slate-400 mt-1 block">AI variations crafted</span>
+          </div>
+
+          <!-- Card 3 -->
+          <div class="bg-white p-4 rounded-xl border border-slate-200/80 shadow-card">
+            <div class="flex items-center justify-between text-slate-500 mb-2">
+              <span class="text-xs font-medium">Emails Opened</span>
+              <div class="w-7 h-7 rounded-md bg-blue-50 text-blue-600 flex items-center justify-center">
+                <i data-lucide="mail-open" class="w-3.5 h-3.5"></i>
+              </div>
+            </div>
+            <div class="flex items-baseline gap-2">
+              <span id="stat-opened" class="text-2xl font-bold text-slate-900">104</span>
+              <span class="text-[11px] font-semibold text-emerald-600 bg-emerald-50 px-1.5 py-0.5 rounded">73.2%</span>
+            </div>
+            <span class="text-[11px] text-slate-400 mt-1 block">Above 54% industry avg</span>
+          </div>
+
+          <!-- Card 4 -->
+          <div class="bg-white p-4 rounded-xl border border-slate-200/80 shadow-card">
+            <div class="flex items-center justify-between text-slate-500 mb-2">
+              <span class="text-xs font-medium">Response Rate</span>
+              <div class="w-7 h-7 rounded-md bg-emerald-50 text-emerald-600 flex items-center justify-center">
+                <i data-lucide="message-square-check" class="w-3.5 h-3.5"></i>
+              </div>
+            </div>
+            <div class="flex items-baseline gap-2">
+              <span id="stat-rate" class="text-2xl font-bold text-slate-900">38.7%</span>
+              <span class="text-[11px] font-semibold text-emerald-600 bg-emerald-50 px-1.5 py-0.5 rounded">55 replies</span>
+            </div>
+            <span class="text-[11px] text-slate-400 mt-1 block">18 interview invites scheduled</span>
+          </div>
+        </div>
+
+        <!-- Outreach Activity Chart Card -->
+        <div class="bg-white p-5 rounded-xl border border-slate-200/80 shadow-card">
+          <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 mb-4">
+            <div>
+              <h3 class="text-sm font-semibold text-slate-900">Outreach Activity</h3>
+              <p class="text-xs text-slate-400">Daily emails dispatched and recruiter responses over the past 14 days</p>
+            </div>
+            <div class="flex items-center gap-4 text-xs">
+              <div class="flex items-center gap-1.5">
+                <span class="w-2.5 h-2.5 rounded-full bg-brand-600"></span>
+                <span class="text-slate-600 font-medium">Emails Sent</span>
+              </div>
+              <div class="flex items-center gap-1.5">
+                <span class="w-2.5 h-2.5 rounded-full bg-emerald-500"></span>
+                <span class="text-slate-600 font-medium">Replies Received</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Clean SVG Area & Bar Visualization -->
+          <div class="w-full h-44 relative">
+            <svg class="w-full h-full overflow-visible" viewBox="0 0 700 160" preserveAspectRatio="none">
+              <!-- Grid lines -->
+              <line x1="0" y1="40" x2="700" y2="40" stroke="#f1f5f9" stroke-width="1" stroke-dasharray="4" />
+              <line x1="0" y1="80" x2="700" y2="80" stroke="#f1f5f9" stroke-width="1" stroke-dasharray="4" />
+              <line x1="0" y1="120" x2="700" y2="120" stroke="#f1f5f9" stroke-width="1" stroke-dasharray="4" />
+              <line x1="0" y1="155" x2="700" y2="155" stroke="#e2e8f0" stroke-width="1" />
+
+              <!-- Sent emails area path -->
+              <path d="M 0 155 L 0 130 Q 50 110 100 115 T 200 90 T 300 70 T 400 95 T 500 50 T 600 40 T 700 30 L 700 155 Z" fill="rgba(99, 102, 241, 0.08)" />
+              <path d="M 0 130 Q 50 110 100 115 T 200 90 T 300 70 T 400 95 T 500 50 T 600 40 T 700 30" fill="none" stroke="#4f46e5" stroke-width="2.5" stroke-linecap="round" />
+
+              <!-- Replies line path -->
+              <path d="M 0 148 Q 50 140 100 142 T 200 130 T 300 120 T 400 132 T 500 110 T 600 98 T 700 85" fill="none" stroke="#10b981" stroke-width="2" stroke-dasharray="4 2" stroke-linecap="round" />
+
+              <!-- Dots for key recent points -->
+              <circle cx="500" cy="50" r="4" fill="#4f46e5" class="shadow-sm" />
+              <circle cx="600" cy="40" r="4" fill="#4f46e5" class="shadow-sm" />
+              <circle cx="700" cy="30" r="4.5" fill="#4f46e5" stroke="#ffffff" stroke-width="2" />
+              <circle cx="700" cy="85" r="4" fill="#10b981" stroke="#ffffff" stroke-width="2" />
+            </svg>
+            <div class="flex justify-between text-[11px] text-slate-400 mt-2">
+              <span>Oct 17</span>
+              <span>Oct 20</span>
+              <span>Oct 23</span>
+              <span>Oct 26</span>
+              <span>Oct 28</span>
+              <span>Today (Oct 30)</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Recent Email Activity Table -->
+        <div class="bg-white rounded-xl border border-slate-200/80 shadow-card overflow-hidden">
+          <div class="p-4 border-b border-slate-100 flex items-center justify-between">
+            <div>
+              <h3 class="text-sm font-semibold text-slate-900">Recent Outreach Activity</h3>
+              <p class="text-xs text-slate-400">Track and manage your most recent email pitches</p>
+            </div>
+            <button onclick="navigateTo('history')" class="text-xs text-brand-600 hover:text-brand-700 font-medium flex items-center gap-1">
+              <span>View all 142 emails</span>
+              <i data-lucide="arrow-right" class="w-3.5 h-3.5"></i>
+            </button>
+          </div>
+
+          <!-- Table Component -->
+          <div class="overflow-x-auto">
+            <table class="w-full text-left text-xs">
+              <thead class="bg-slate-50/75 border-b border-slate-100 text-slate-400 font-semibold uppercase tracking-wider text-[10px]">
+                <tr>
+                  <th class="py-3 px-4">Recipient</th>
+                  <th class="py-3 px-4">Company</th>
+                  <th class="py-3 px-4">Subject</th>
+                  <th class="py-3 px-4">Status</th>
+                  <th class="py-3 px-4">Date</th>
+                  <th class="py-3 px-4 text-right">Action</th>
+                </tr>
+              </thead>
+              <tbody id="dashboard-recent-tbody" class="divide-y divide-slate-100">
+                <!-- Dynamically populated via JS -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <!-- ================= 3. COMPOSE EMAIL VIEW (Hero Experience) ================= -->
+      <section id="view-compose" class="view-transition hidden max-w-7xl mx-auto">
+        <div class="mb-5 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+          <div>
+            <h1 class="text-xl font-semibold text-slate-900 tracking-tight">Compose Tailored Pitch</h1>
+            <p class="text-xs text-slate-500">Provide job details on the left, generate an AI personalized cold pitch on the right.</p>
+          </div>
+          <div class="flex items-center gap-2">
+            <button onclick="loadSampleOpportunity()" class="px-3 py-1.5 bg-white border border-slate-200 hover:bg-slate-50 text-slate-600 text-xs font-medium rounded-lg shadow-subtle transition-colors flex items-center gap-1.5" title="Fill with sample job data">
+              <i data-lucide="wand-2" class="w-3.5 h-3.5 text-brand-500"></i>
+              <span>Load Sample Job</span>
+            </button>
+            <button onclick="resetComposeForm()" class="px-3 py-1.5 text-slate-500 hover:text-slate-800 text-xs font-medium rounded-lg hover:bg-slate-100 transition-colors">
+              Clear
+            </button>
+          </div>
+        </div>
+
+        <!-- Two-Column Layout -->
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+          
+          <!-- LEFT COLUMN: Email Details & Inputs (5 Cols) -->
+          <div class="lg:col-span-5 bg-white p-5 rounded-xl border border-slate-200/80 shadow-card space-y-4">
+            <div class="flex items-center justify-between pb-3 border-b border-slate-100">
+              <span class="text-xs font-semibold text-slate-800 uppercase tracking-wider text-[11px]">1. Opportunity & Contact</span>
+              <span class="text-[11px] text-brand-600 font-medium">Resume: Monu Shah (Active)</span>
+            </div>
+
+            <!-- Recipient Email -->
+            <div>
+              <label for="compose-email" class="block text-xs font-medium text-slate-700 mb-1">
+                Recipient / HR Email <span class="text-rose-500">*</span>
+              </label>
+              <div class="relative">
+                <i data-lucide="mail" class="w-3.5 h-3.5 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2"></i>
+                <input type="email" id="compose-email" placeholder="sarah.chen@stripe.com" class="w-full pl-8 pr-3 py-2 text-xs bg-white border border-slate-200 rounded-lg text-slate-800 placeholder-slate-400 focus:outline-none focus:ring-1 focus:ring-brand-500 focus:border-brand-500 transition-all">
+              </div>
+            </div>
+
+            <!-- Recruiter Name & Company Row -->
+            <div class="grid grid-cols-2 gap-3">
+              <div>
+                <label for="compose-name" class="block text-xs font-medium text-slate-700 mb-1">HR / Recruiter Name</label>
+                <input type="text" id="compose-name" placeholder="Sarah Chen" class="w-full px-3 py-2 text-xs bg-white border border-slate-200 rounded-lg text-slate-800 placeholder-slate-400 focus:outline-none focus:ring-1 focus:ring-brand-500 focus:border-brand-500 transition-all">
+              </div>
+              <div>
+                <label for="compose-company" class="block text-xs font-medium text-slate-700 mb-1">
+                  Company Name <span class="text-rose-500">*</span>
+                </label>
+                <input type="text" id="compose-company" placeholder="Stripe" class="w-full px-3 py-2 text-xs bg-white border border-slate-200 rounded-lg text-slate-800 placeholder-slate-400 focus:outline-none focus:ring-1 focus:ring-brand-500 focus:border-brand-500 transition-all">
+              </div>
+            </div>
+
+            <!-- Job Position -->
+            <div>
+              <label for="compose-role" class="block text-xs font-medium text-slate-700 mb-1">
+                Target Role / Job Position <span class="text-rose-500">*</span>
+              </label>
+              <input type="text" id="compose-role" placeholder="Senior Full-Stack Engineer" class="w-full px-3 py-2 text-xs bg-white border border-slate-200 rounded-lg text-slate-800 placeholder-slate-400 focus:outline-none focus:ring-1 focus:ring-brand-500 focus:border-brand-500 transition-all">
+            </div>
+
+            <!-- Job Description -->
+            <div>
+              <div class="flex items-center justify-between mb-1">
+                <label for="compose-jd" class="block text-xs font-medium text-slate-700">Job Description (Key Requirements)</label>
+                <span id="jd-counter" class="text-[10px] text-slate-400">Optional but recommended</span>
+              </div>
+              <textarea id="compose-jd" rows="4" placeholder="Paste the responsibilities, tech stack, or requirements from LinkedIn / job board..." class="w-full px-3 py-2 text-xs bg-white border border-slate-200 rounded-lg text-slate-800 placeholder-slate-400 focus:outline-none focus:ring-1 focus:ring-brand-500 focus:border-brand-500 transition-all resize-y"></textarea>
+            </div>
+
+            <!-- Sender Profile / Introduction Summary -->
+            <div>
+              <label for="compose-sender-intro" class="block text-xs font-medium text-slate-700 mb-1">Your Highlights & Profile Focus</label>
+              <textarea id="compose-sender-intro" rows="2" placeholder="5+ years building distributed React/Node web apps; reduced latency 35% at TechCorp..." class="w-full px-3 py-2 text-xs bg-white border border-slate-200 rounded-lg text-slate-800 placeholder-slate-400 focus:outline-none focus:ring-1 focus:ring-brand-500 focus:border-brand-500 transition-all resize-none"></textarea>
+            </div>
+
+            <!-- Additional Instructions -->
+            <div>
+              <label for="compose-instructions" class="block text-xs font-medium text-slate-700 mb-1">Additional Instructions (Optional)</label>
+              <input type="text" id="compose-instructions" placeholder="e.g. Keep under 110 words, mention Stripe's recent developer tools release..." class="w-full px-3 py-2 text-xs bg-white border border-slate-200 rounded-lg text-slate-800 placeholder-slate-400 focus:outline-none focus:ring-1 focus:ring-brand-500 focus:border-brand-500 transition-all">
+            </div>
+
+            <!-- AI Settings: Tone & Length -->
+            <div class="pt-3 border-t border-slate-100 space-y-3">
+              <div>
+                <label class="block text-[11px] font-semibold text-slate-700 uppercase tracking-wider mb-1.5">Email Tone</label>
+                <div class="grid grid-cols-4 gap-1.5 text-xs">
+                  <label class="cursor-pointer">
+                    <input type="radio" name="email-tone" value="professional" checked class="peer sr-only">
+                    <div class="px-2 py-1.5 text-center rounded-lg border border-slate-200 peer-checked:border-brand-600 peer-checked:bg-brand-50 peer-checked:text-brand-700 text-slate-600 text-[11px] font-medium transition-colors">
+                      Professional
+                    </div>
+                  </label>
+                  <label class="cursor-pointer">
+                    <input type="radio" name="email-tone" value="confident" class="peer sr-only">
+                    <div class="px-2 py-1.5 text-center rounded-lg border border-slate-200 peer-checked:border-brand-600 peer-checked:bg-brand-50 peer-checked:text-brand-700 text-slate-600 text-[11px] font-medium transition-colors">
+                      Confident
+                    </div>
+                  </label>
+                  <label class="cursor-pointer">
+                    <input type="radio" name="email-tone" value="friendly" class="peer sr-only">
+                    <div class="px-2 py-1.5 text-center rounded-lg border border-slate-200 peer-checked:border-brand-600 peer-checked:bg-brand-50 peer-checked:text-brand-700 text-slate-600 text-[11px] font-medium transition-colors">
+                      Friendly
+                    </div>
+                  </label>
+                  <label class="cursor-pointer">
+                    <input type="radio" name="email-tone" value="formal" class="peer sr-only">
+                    <div class="px-2 py-1.5 text-center rounded-lg border border-slate-200 peer-checked:border-brand-600 peer-checked:bg-brand-50 peer-checked:text-brand-700 text-slate-600 text-[11px] font-medium transition-colors">
+                      Formal
+                    </div>
+                  </label>
+                </div>
+              </div>
+
+              <div>
+                <label class="block text-[11px] font-semibold text-slate-700 uppercase tracking-wider mb-1.5">Email Length</label>
+                <div class="grid grid-cols-3 gap-1.5 text-xs">
+                  <label class="cursor-pointer">
+                    <input type="radio" name="email-length" value="short" checked class="peer sr-only">
+                    <div class="px-2 py-1.5 text-center rounded-lg border border-slate-200 peer-checked:border-brand-600 peer-checked:bg-brand-50 peer-checked:text-brand-700 text-slate-600 text-[11px] font-medium transition-colors">
+                      Short (&lt;100w)
+                    </div>
+                  </label>
+                  <label class="cursor-pointer">
+                    <input type="radio" name="email-length" value="medium" class="peer sr-only">
+                    <div class="px-2 py-1.5 text-center rounded-lg border border-slate-200 peer-checked:border-brand-600 peer-checked:bg-brand-50 peer-checked:text-brand-700 text-slate-600 text-[11px] font-medium transition-colors">
+                      Medium (~180w)
+                    </div>
+                  </label>
+                  <label class="cursor-pointer">
+                    <input type="radio" name="email-length" value="detailed" class="peer sr-only">
+                    <div class="px-2 py-1.5 text-center rounded-lg border border-slate-200 peer-checked:border-brand-600 peer-checked:bg-brand-50 peer-checked:text-brand-700 text-slate-600 text-[11px] font-medium transition-colors">
+                      Detailed (~280w)
+                    </div>
+                  </label>
+                </div>
+              </div>
+            </div>
+
+            <!-- Primary Generate Button -->
+            <button id="btn-generate-ai" onclick="handleGenerateEmail()" class="w-full py-2.5 px-4 bg-brand-600 hover:bg-brand-700 text-white font-medium text-xs rounded-lg shadow-sm transition-all duration-150 flex items-center justify-center gap-2">
+              <i data-lucide="sparkles" class="w-4 h-4"></i>
+              <span id="generate-btn-text">Generate Email with AI</span>
+            </button>
+          </div>
+
+          <!-- RIGHT COLUMN: Email Client Preview (7 Cols) -->
+          <div class="lg:col-span-7 bg-white rounded-xl border border-slate-200/80 shadow-card flex flex-col min-h-[580px] overflow-hidden">
+            
+            <!-- Real Email Client Top Header -->
+            <div class="px-5 py-3.5 border-b border-slate-100 bg-slate-50/50 flex items-center justify-between">
+              <div class="flex items-center gap-2">
+                <div class="flex gap-1.5 mr-2">
+                  <span class="w-2.5 h-2.5 rounded-full bg-slate-200"></span>
+                  <span class="w-2.5 h-2.5 rounded-full bg-slate-200"></span>
+                  <span class="w-2.5 h-2.5 rounded-full bg-slate-200"></span>
+                </div>
+                <span class="text-xs font-semibold text-slate-700">Preview Draft</span>
+                <span class="inline-flex items-center gap-1 text-[10px] font-medium text-indigo-700 bg-indigo-50 border border-indigo-200/50 px-2 py-0.5 rounded-full">
+                  <i data-lucide="bot" class="w-3 h-3"></i>
+                  <span>AI Powered</span>
+                </span>
+              </div>
+
+              <!-- Top Right Preview Actions -->
+              <div class="flex items-center gap-1.5">
+                <button onclick="handleRegenerate()" id="btn-regenerate" class="p-1.5 text-slate-500 hover:text-slate-800 hover:bg-slate-100 rounded-md transition-colors text-xs flex items-center gap-1" title="Regenerate new subject & variation">
+                  <i data-lucide="refresh-cw" class="w-3.5 h-3.5"></i>
+                  <span class="hidden sm:inline">Regenerate</span>
+                </button>
+                <button onclick="handleCopyPreview()" id="btn-copy-preview" class="p-1.5 text-slate-500 hover:text-slate-800 hover:bg-slate-100 rounded-md transition-colors text-xs flex items-center gap-1" title="Copy to clipboard">
+                  <i data-lucide="copy" class="w-3.5 h-3.5"></i>
+                  <span class="hidden sm:inline">Copy</span>
+                </button>
+              </div>
+            </div>
+
+            <!-- Email Metadata Fields (To, From, Subject) -->
+            <div class="px-5 py-3 border-b border-slate-100 space-y-2 text-xs">
+              <div class="flex items-center gap-3">
+                <span class="w-12 text-slate-400 font-medium">To:</span>
+                <span id="preview-to" class="font-medium text-slate-800 bg-slate-100/70 px-2 py-0.5 rounded">sarah.chen@stripe.com</span>
+              </div>
+              <div class="flex items-center gap-3">
+                <span class="w-12 text-slate-400 font-medium">From:</span>
+                <span class="text-slate-600 font-medium">Monu Shah &lt;monushah108@gmail.com&gt;</span>
+              </div>
+              <div class="flex items-center gap-3 pt-1 border-t border-slate-100/80">
+                <span class="w-12 text-slate-400 font-medium">Subject:</span>
+                <input type="text" id="preview-subject" value="Senior Full-Stack Engineer role at Stripe — Monu Shah" class="flex-1 font-semibold text-slate-900 border-none p-0 focus:ring-0 focus:outline-none bg-transparent placeholder-slate-400">
+              </div>
+            </div>
+
+            <!-- Rich Text Toolbar -->
+            <div class="px-5 py-2 border-b border-slate-100 bg-slate-50/30 flex items-center justify-between text-xs text-slate-500">
+              <div class="flex items-center gap-1">
+                <button onclick="formatDoc('bold')" class="p-1 hover:bg-slate-100 rounded text-slate-600 font-bold" title="Bold">B</button>
+                <button onclick="formatDoc('italic')" class="p-1 hover:bg-slate-100 rounded text-slate-600 italic" title="Italic">I</button>
+                <button onclick="formatDoc('insertUnorderedList')" class="p-1 hover:bg-slate-100 rounded text-slate-600" title="Bullet List">
+                  <i data-lucide="list" class="w-3.5 h-3.5"></i>
+                </button>
+                <button onclick="formatDoc('createLink')" class="p-1 hover:bg-slate-100 rounded text-slate-600" title="Insert Link">
+                  <i data-lucide="link" class="w-3.5 h-3.5"></i>
+                </button>
+                <div class="h-3 w-[1px] bg-slate-200 mx-1"></div>
+                <button onclick="formatDoc('removeFormat')" class="p-1 hover:bg-slate-100 rounded text-slate-400" title="Clear Formatting">
+                  <i data-lucide="remove-formatting" class="w-3.5 h-3.5"></i>
+                </button>
+              </div>
+
+              <!-- Word Counter -->
+              <div class="text-[11px] text-slate-400">
+                <span id="preview-word-count">118 words</span> • ~30s read
+              </div>
+            </div>
+
+            <!-- Editable Email Body Content -->
+            <div class="flex-1 p-6 relative">
+              <div id="email-preview-body" contenteditable="true" data-placeholder="Click 'Generate Email with AI' to draft your personalized email pitch..." class="w-full h-full text-xs md:text-sm text-slate-800 leading-relaxed outline-none focus:outline-none whitespace-pre-wrap min-h-[300px]">Hi Sarah,
+
+I noticed Stripe is expanding its engineering team with a Senior Full-Stack Engineer, and given my background scaling high-performance web applications, I wanted to reach out directly.
+
+Over the past 5 years, I've specialized in React, TypeScript, and Node.js microservices. At my previous company, I architected a modular dashboard that reduced p99 latency by 35% and supported 500,000+ daily active users.
+
+Given Stripe's focus on developer experience and reliability, I would love to bring this same engineering rigor to your payments and billing teams. You can review my work at https://github.com/monushah108.
+
+Do you have 10 minutes this Thursday or Friday for a brief conversation?
+
+Best regards,
+Monu Shah
+monushah108@gmail.com | +91 98765 43210</div>
+
+              <!-- Skeleton Loading Overlay during AI Generation -->
+              <div id="ai-loading-overlay" class="absolute inset-0 bg-white/90 backdrop-blur-sm flex flex-col items-center justify-center gap-3 hidden z-10">
+                <div class="w-8 h-8 rounded-full border-2 border-brand-600 border-t-transparent animate-spin"></div>
+                <p id="ai-loading-text" class="text-xs font-medium text-slate-700 animate-pulse">Reading job requirements and matching your background...</p>
+              </div>
+            </div>
+
+            <!-- Email Bottom Action Bar -->
+            <div class="px-5 py-3.5 border-t border-slate-100 bg-slate-50/50 flex flex-wrap items-center justify-between gap-3">
+              <div class="flex items-center gap-2">
+                <button onclick="handleSaveDraft()" class="px-3 py-1.5 bg-white border border-slate-200 hover:bg-slate-50 text-slate-700 text-xs font-medium rounded-lg shadow-subtle transition-colors flex items-center gap-1.5">
+                  <i data-lucide="bookmark" class="w-3.5 h-3.5 text-slate-400"></i>
+                  <span>Save as Draft</span>
+                </button>
+              </div>
+
+              <div class="flex items-center gap-2">
+                <button onclick="openInGmailDirect()" class="px-3 py-1.5 bg-white border border-slate-200 hover:bg-slate-50 text-slate-700 text-xs font-medium rounded-lg shadow-subtle transition-colors flex items-center gap-1.5" title="Open formatted in Gmail Compose">
+                  <i data-lucide="external-link" class="w-3.5 h-3.5 text-slate-400"></i>
+                  <span>Open in Gmail</span>
+                </button>
+                <button onclick="openSendConfirmDialog()" class="px-4 py-1.5 bg-brand-600 hover:bg-brand-700 text-white text-xs font-medium rounded-lg shadow-sm transition-all flex items-center gap-1.5">
+                  <i data-lucide="send" class="w-3.5 h-3.5"></i>
+                  <span>Send Email</span>
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ================= 4. EMAIL HISTORY VIEW ================= -->
+      <section id="view-history" class="view-transition hidden max-w-6xl mx-auto space-y-5">
+        <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 pb-3 border-b border-slate-200/60">
+          <div>
+            <h1 class="text-xl font-semibold text-slate-900 tracking-tight">Email History</h1>
+            <p class="text-xs text-slate-500">Track all dispatched and drafted recruiter outreaches in one place.</p>
+          </div>
+          <button onclick="exportHistoryCsv()" class="px-3 py-1.5 bg-white border border-slate-200 hover:bg-slate-50 text-slate-700 text-xs font-medium rounded-lg shadow-subtle transition-colors flex items-center gap-1.5 self-start sm:self-auto">
+            <i data-lucide="download" class="w-3.5 h-3.5 text-slate-500"></i>
+            <span>Export CSV</span>
+          </button>
+        </div>
+
+        <!-- Filter and Search Bar -->
+        <div class="bg-white p-3 rounded-xl border border-slate-200/80 shadow-subtle flex flex-col sm:flex-row items-center justify-between gap-3">
+          <!-- Status Tabs -->
+          <div class="flex items-center gap-1 w-full sm:w-auto overflow-x-auto text-xs font-medium">
+            <button onclick="filterHistory('all')" class="hist-filter-btn px-3 py-1.5 rounded-lg bg-slate-100 text-slate-900" data-filter="all">All (142)</button>
+            <button onclick="filterHistory('sent')" class="hist-filter-btn px-3 py-1.5 rounded-lg text-slate-600 hover:bg-slate-50" data-filter="sent">Sent</button>
+            <button onclick="filterHistory('opened')" class="hist-filter-btn px-3 py-1.5 rounded-lg text-slate-600 hover:bg-slate-50" data-filter="opened">Opened</button>
+            <button onclick="filterHistory('replied')" class="hist-filter-btn px-3 py-1.5 rounded-lg text-slate-600 hover:bg-slate-50" data-filter="replied">Replied</button>
+            <button onclick="filterHistory('draft')" class="hist-filter-btn px-3 py-1.5 rounded-lg text-slate-600 hover:bg-slate-50" data-filter="draft">Drafts</button>
+          </div>
+
+          <!-- History Search Input -->
+          <div class="relative w-full sm:w-64">
+            <i data-lucide="search" class="w-3.5 h-3.5 text-slate-400 absolute left-2.5 top-1/2 -translate-y-1/2"></i>
+            <input type="text" id="history-search-input" onkeyup="handleHistorySearch()" placeholder="Filter by company or recipient..." class="w-full pl-8 pr-3 py-1.5 text-xs bg-slate-50 border border-slate-200 rounded-lg text-slate-700 placeholder-slate-400 focus:bg-white focus:outline-none focus:ring-1 focus:ring-brand-500">
+          </div>
+        </div>
+
+        <!-- History Table -->
+        <div class="bg-white rounded-xl border border-slate-200/80 shadow-card overflow-hidden">
+          <div class="overflow-x-auto">
+            <table class="w-full text-left text-xs">
+              <thead class="bg-slate-50/75 border-b border-slate-100 text-slate-400 font-semibold uppercase tracking-wider text-[10px]">
+                <tr>
+                  <th class="py-3 px-4">Recipient</th>
+                  <th class="py-3 px-4">Company</th>
+                  <th class="py-3 px-4">Subject</th>
+                  <th class="py-3 px-4">Sent Date</th>
+                  <th class="py-3 px-4">Status</th>
+                  <th class="py-3 px-4 text-right">Actions</th>
+                </tr>
+              </thead>
+              <tbody id="history-full-tbody" class="divide-y divide-slate-100">
+                <!-- Dynamically populated -->
+              </tbody>
+            </table>
+          </div>
+
+          <!-- Pagination -->
+          <div class="p-3.5 border-t border-slate-100 bg-slate-50/30 flex items-center justify-between text-xs text-slate-500">
+            <span>Showing <strong class="text-slate-700">1 to 8</strong> of 142 outreaches</span>
+            <div class="flex items-center gap-1.5">
+              <button class="px-2.5 py-1 border border-slate-200 rounded-md bg-white text-slate-400 hover:bg-slate-50 disabled:opacity-50" disabled>Previous</button>
+              <button class="px-2.5 py-1 border border-slate-200 rounded-md bg-white text-slate-700 hover:bg-slate-50">Next</button>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ================= 5. CONTACTS VIEW ================= -->
+      <section id="view-contacts" class="view-transition hidden max-w-6xl mx-auto space-y-5">
+        <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 pb-3 border-b border-slate-200/60">
+          <div>
+            <h1 class="text-xl font-semibold text-slate-900 tracking-tight">Recruiter & HR Contacts</h1>
+            <p class="text-xs text-slate-500">Manage your network of talent partners, recruiters, and hiring managers.</p>
+          </div>
+          <button onclick="openAddContactModal()" class="px-3.5 py-2 bg-brand-600 hover:bg-brand-700 text-white text-xs font-medium rounded-lg shadow-sm transition-all flex items-center gap-1.5 self-start sm:self-auto">
+            <i data-lucide="user-plus" class="w-3.5 h-3.5"></i>
+            <span>Add New Contact</span>
+          </button>
+        </div>
+
+        <!-- Contacts Search -->
+        <div class="bg-white p-3 rounded-xl border border-slate-200/80 shadow-subtle flex items-center justify-between gap-3">
+          <div class="relative flex-1 max-w-sm">
+            <i data-lucide="search" class="w-3.5 h-3.5 text-slate-400 absolute left-2.5 top-1/2 -translate-y-1/2"></i>
+            <input type="text" id="contacts-search-input" onkeyup="handleContactsSearch()" placeholder="Search by name, company, or role..." class="w-full pl-8 pr-3 py-1.5 text-xs bg-slate-50 border border-slate-200 rounded-lg text-slate-700 placeholder-slate-400 focus:bg-white focus:outline-none focus:ring-1 focus:ring-brand-500">
+          </div>
+          <span class="text-xs text-slate-400">28 Saved Contacts</span>
+        </div>
+
+        <!-- Contacts Table -->
+        <div class="bg-white rounded-xl border border-slate-200/80 shadow-card overflow-hidden">
+          <div class="overflow-x-auto">
+            <table class="w-full text-left text-xs">
+              <thead class="bg-slate-50/75 border-b border-slate-100 text-slate-400 font-semibold uppercase tracking-wider text-[10px]">
+                <tr>
+                  <th class="py-3 px-4">Name</th>
+                  <th class="py-3 px-4">Company</th>
+                  <th class="py-3 px-4">Position</th>
+                  <th class="py-3 px-4">Outreaches</th>
+                  <th class="py-3 px-4">Last Contacted</th>
+                  <th class="py-3 px-4 text-right">Action</th>
+                </tr>
+              </thead>
+              <tbody id="contacts-tbody" class="divide-y divide-slate-100">
+                <!-- Dynamically populated -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <!-- ================= 6. TEMPLATES VIEW ================= -->
+      <section id="view-templates" class="view-transition hidden max-w-6xl mx-auto space-y-5">
+        <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 pb-3 border-b border-slate-200/60">
+          <div>
+            <h1 class="text-xl font-semibold text-slate-900 tracking-tight">Outreach Templates</h1>
+            <p class="text-xs text-slate-500">Curated, high-response outreach templates ready to customize and send.</p>
+          </div>
+        </div>
+
+        <!-- Templates Grid (Cards) -->
+        <div id="templates-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+          <!-- Dynamically populated via JS -->
+        </div>
+      </section>
+
+      <!-- ================= 7. ANALYTICS VIEW ================= -->
+      <section id="view-analytics" class="view-transition hidden max-w-6xl mx-auto space-y-6">
+        <div class="pb-3 border-b border-slate-200/60">
+          <h1 class="text-xl font-semibold text-slate-900 tracking-tight">Performance Analytics</h1>
+          <p class="text-xs text-slate-500">Track conversion funnel, open rates, and company engagement metrics.</p>
+        </div>
+
+        <!-- Top Funnel Metric Summary -->
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <div class="bg-white p-5 rounded-xl border border-slate-200/80 shadow-card">
+            <span class="text-xs font-medium text-slate-500">Average Open Rate</span>
+            <div class="text-2xl font-bold text-slate-900 mt-1">73.2%</div>
+            <div class="w-full bg-slate-100 h-2 rounded-full mt-3 overflow-hidden">
+              <div class="bg-brand-600 h-full rounded-full" style="width: 73.2%"></div>
+            </div>
+            <span class="text-[11px] text-slate-400 mt-2 block">Benchmark: 45% - 55%</span>
+          </div>
+
+          <div class="bg-white p-5 rounded-xl border border-slate-200/80 shadow-card">
+            <span class="text-xs font-medium text-slate-500">Positive Reply Rate</span>
+            <div class="text-2xl font-bold text-slate-900 mt-1">38.7%</div>
+            <div class="w-full bg-slate-100 h-2 rounded-full mt-3 overflow-hidden">
+              <div class="bg-emerald-500 h-full rounded-full" style="width: 38.7%"></div>
+            </div>
+            <span class="text-[11px] text-slate-400 mt-2 block">55 replies / 142 outreaches</span>
+          </div>
+
+          <div class="bg-white p-5 rounded-xl border border-slate-200/80 shadow-card">
+            <span class="text-xs font-medium text-slate-500">Interview Conversion</span>
+            <div class="text-2xl font-bold text-slate-900 mt-1">12.6%</div>
+            <div class="w-full bg-slate-100 h-2 rounded-full mt-3 overflow-hidden">
+              <div class="bg-purple-600 h-full rounded-full" style="width: 12.6%"></div>
+            </div>
+            <span class="text-[11px] text-slate-400 mt-2 block">18 screening calls booked</span>
+          </div>
+        </div>
+
+        <!-- Company-wise breakdown -->
+        <div class="bg-white p-5 rounded-xl border border-slate-200/80 shadow-card">
+          <h3 class="text-sm font-semibold text-slate-900 mb-1">Company Engagement Breakdown</h3>
+          <p class="text-xs text-slate-400 mb-4">Response rates across top targeted organizations</p>
+
+          <div class="space-y-3.5 text-xs">
+            <div>
+              <div class="flex justify-between font-medium mb-1">
+                <span class="text-slate-800">Stripe (4 emails sent)</span>
+                <span class="text-emerald-600 font-semibold">100% Opened • 2 Replies</span>
+              </div>
+              <div class="w-full bg-slate-100 h-2 rounded-full overflow-hidden">
+                <div class="bg-emerald-500 h-full rounded-full" style="width: 100%"></div>
+              </div>
+            </div>
+
+            <div>
+              <div class="flex justify-between font-medium mb-1">
+                <span class="text-slate-800">Linear (3 emails sent)</span>
+                <span class="text-emerald-600 font-semibold">100% Opened • 1 Interview Scheduled</span>
+              </div>
+              <div class="w-full bg-slate-100 h-2 rounded-full overflow-hidden">
+                <div class="bg-brand-600 h-full rounded-full" style="width: 100%"></div>
+              </div>
+            </div>
+
+            <div>
+              <div class="flex justify-between font-medium mb-1">
+                <span class="text-slate-800">Vercel (5 emails sent)</span>
+                <span class="text-slate-600 font-semibold">80% Opened • 2 Replies</span>
+              </div>
+              <div class="w-full bg-slate-100 h-2 rounded-full overflow-hidden">
+                <div class="bg-brand-600 h-full rounded-full" style="width: 80%"></div>
+              </div>
+            </div>
+
+            <div>
+              <div class="flex justify-between font-medium mb-1">
+                <span class="text-slate-800">OpenAI (3 emails sent)</span>
+                <span class="text-slate-600 font-semibold">66% Opened • 1 Reply</span>
+              </div>
+              <div class="w-full bg-slate-100 h-2 rounded-full overflow-hidden">
+                <div class="bg-indigo-400 h-full rounded-full" style="width: 66%"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ================= 8. SETTINGS VIEW ================= -->
+      <section id="view-settings" class="view-transition hidden max-w-4xl mx-auto space-y-6">
+        <div class="pb-3 border-b border-slate-200/60">
+          <h1 class="text-xl font-semibold text-slate-900 tracking-tight">Platform Settings</h1>
+          <p class="text-xs text-slate-500">Manage your profile, AI provider credentials, and delivery options.</p>
+        </div>
+
+        <!-- Profile Card -->
+        <div class="bg-white p-5 rounded-xl border border-slate-200/80 shadow-card space-y-4">
+          <h3 class="text-sm font-semibold text-slate-900 border-b border-slate-100 pb-2">Candidate Profile & Signature</h3>
+          
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 text-xs">
+            <div>
+              <label class="block font-medium text-slate-700 mb-1">Your Full Name</label>
+              <input type="text" id="setting-name" value="Monu Shah" class="w-full px-3 py-2 border border-slate-200 rounded-lg">
+            </div>
+            <div>
+              <label class="block font-medium text-slate-700 mb-1">Your Email</label>
+              <input type="email" id="setting-email" value="monushah108@gmail.com" class="w-full px-3 py-2 border border-slate-200 rounded-lg">
+            </div>
+            <div>
+              <label class="block font-medium text-slate-700 mb-1">Portfolio / GitHub Link</label>
+              <input type="url" id="setting-portfolio" value="https://github.com/monushah108" class="w-full px-3 py-2 border border-slate-200 rounded-lg">
+            </div>
+            <div>
+              <label class="block font-medium text-slate-700 mb-1">LinkedIn URL</label>
+              <input type="url" id="setting-linkedin" value="https://linkedin.com/in/monushah" class="w-full px-3 py-2 border border-slate-200 rounded-lg">
+            </div>
+          </div>
+        </div>
+
+        <!-- AI Engine Configuration -->
+        <div class="bg-white p-5 rounded-xl border border-slate-200/80 shadow-card space-y-4">
+          <h3 class="text-sm font-semibold text-slate-900 border-b border-slate-100 pb-2">AI Engine Provider</h3>
+          <p class="text-xs text-slate-500">By default, PitchCraft AI includes a fast, highly-tailored built-in local engine. You can also connect your own Google Gemini or OpenAI API keys directly.</p>
+
+          <div class="space-y-3 text-xs">
+            <div>
+              <label class="block font-medium text-slate-700 mb-1">Active AI Model</label>
+              <select id="setting-ai-model" class="w-full px-3 py-2 border border-slate-200 rounded-lg bg-white text-slate-800">
+                <option value="builtin">Built-in PitchCraft Smart Copywriter (Free / Instant)</option>
+                <option value="gemini">Google Gemini 1.5 Flash (Google AI Studio)</option>
+                <option value="openai">OpenAI GPT-4o-mini</option>
+              </select>
+            </div>
+
+            <div>
+              <label class="block font-medium text-slate-700 mb-1">Custom API Key (Optional)</label>
+              <input type="password" id="setting-api-key" placeholder="Paste your API key here..." class="w-full px-3 py-2 border border-slate-200 rounded-lg">
+            </div>
+          </div>
+
+          <button onclick="handleSaveSettings()" class="px-4 py-2 bg-brand-600 hover:bg-brand-700 text-white text-xs font-medium rounded-lg shadow-sm transition-all">
+            Save Preferences
+          </button>
+        </div>
+      </section>
+
+    </div>
+  </main>
+
+  <!-- ================= SEND CONFIRMATION MODAL ================= -->
+  <div id="modal-send-confirm" class="fixed inset-0 z-50 bg-slate-900/40 backdrop-blur-xs flex items-center justify-center p-4 hidden">
+    <div class="bg-white rounded-xl border border-slate-200 shadow-dropdown max-w-md w-full p-6 space-y-4 animate-in fade-in zoom-in-95 duration-150">
+      <div class="flex items-center gap-3">
+        <div class="w-10 h-10 rounded-full bg-brand-50 text-brand-600 flex items-center justify-center shrink-0">
+          <i data-lucide="send" class="w-5 h-5"></i>
+        </div>
+        <div>
+          <h3 class="text-sm font-semibold text-slate-900">Ready to Send Cold Email?</h3>
+          <p class="text-xs text-slate-500">Please review recipient and subject before dispatching.</p>
+        </div>
+      </div>
+
+      <div class="bg-slate-50 p-3.5 rounded-lg border border-slate-200/60 text-xs space-y-2">
+        <div class="flex justify-between">
+          <span class="text-slate-400">Recipient:</span>
+          <span id="confirm-recipient" class="font-medium text-slate-800">sarah.chen@stripe.com</span>
+        </div>
+        <div class="flex justify-between">
+          <span class="text-slate-400">Company:</span>
+          <span id="confirm-company" class="font-medium text-slate-800">Stripe</span>
+        </div>
+        <div class="pt-1.5 border-t border-slate-200/50">
+          <span class="text-slate-400 block mb-0.5">Subject:</span>
+          <span id="confirm-subject" class="font-medium text-slate-900 line-clamp-1">Senior Full-Stack Engineer role at Stripe — Monu Shah</span>
+        </div>
+      </div>
+
+      <div class="flex items-center justify-end gap-2.5 pt-2">
+        <button onclick="closeSendConfirmDialog()" class="px-3.5 py-2 text-xs font-medium text-slate-600 hover:bg-slate-100 rounded-lg transition-colors">
+          Cancel
+        </button>
+        <button onclick="executeSendEmail()" id="btn-confirm-send" class="px-4 py-2 text-xs font-medium bg-brand-600 hover:bg-brand-700 text-white rounded-lg shadow-sm transition-all flex items-center gap-1.5">
+          <i data-lucide="check" class="w-3.5 h-3.5"></i>
+          <span>Confirm & Send</span>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ================= ADD CONTACT MODAL ================= -->
+  <div id="modal-add-contact" class="fixed inset-0 z-50 bg-slate-900/40 backdrop-blur-xs flex items-center justify-center p-4 hidden">
+    <div class="bg-white rounded-xl border border-slate-200 shadow-dropdown max-w-md w-full p-6 space-y-4">
+      <div class="flex items-center justify-between pb-2 border-b border-slate-100">
+        <h3 class="text-sm font-semibold text-slate-900">Add New Recruiter Contact</h3>
+        <button onclick="closeAddContactModal()" class="text-slate-400 hover:text-slate-600">
+          <i data-lucide="x" class="w-4 h-4"></i>
+        </button>
+      </div>
+
+      <div class="space-y-3 text-xs">
+        <div>
+          <label class="block font-medium text-slate-700 mb-1">Full Name</label>
+          <input type="text" id="new-contact-name" placeholder="Alex Rivera" class="w-full px-3 py-2 border border-slate-200 rounded-lg">
+        </div>
+        <div>
+          <label class="block font-medium text-slate-700 mb-1">Email Address</label>
+          <input type="email" id="new-contact-email" placeholder="alex@linear.app" class="w-full px-3 py-2 border border-slate-200 rounded-lg">
+        </div>
+        <div>
+          <label class="block font-medium text-slate-700 mb-1">Company</label>
+          <input type="text" id="new-contact-company" placeholder="Linear" class="w-full px-3 py-2 border border-slate-200 rounded-lg">
+        </div>
+        <div>
+          <label class="block font-medium text-slate-700 mb-1">Position / Title</label>
+          <input type="text" id="new-contact-role" placeholder="Head of Talent" class="w-full px-3 py-2 border border-slate-200 rounded-lg">
+        </div>
+      </div>
+
+      <div class="flex items-center justify-end gap-2 pt-2">
+        <button onclick="closeAddContactModal()" class="px-3.5 py-2 text-xs font-medium text-slate-600 hover:bg-slate-100 rounded-lg">Cancel</button>
+        <button onclick="handleSaveNewContact()" class="px-4 py-2 text-xs font-medium bg-brand-600 hover:bg-brand-700 text-white rounded-lg">Save Contact</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ================= TEMPLATE PREVIEW MODAL ================= -->
+  <div id="modal-template-preview" class="fixed inset-0 z-50 bg-slate-900/40 backdrop-blur-xs flex items-center justify-center p-4 hidden">
+    <div class="bg-white rounded-xl border border-slate-200 shadow-dropdown max-w-lg w-full p-6 space-y-4">
+      <div class="flex items-center justify-between pb-2 border-b border-slate-100">
+        <div>
+          <h3 id="tpl-modal-title" class="text-sm font-semibold text-slate-900">Template Title</h3>
+          <p id="tpl-modal-category" class="text-xs text-slate-400">Category</p>
+        </div>
+        <button onclick="closeTemplateModal()" class="text-slate-400 hover:text-slate-600">
+          <i data-lucide="x" class="w-4 h-4"></i>
+        </button>
+      </div>
+
+      <div class="bg-slate-50 p-4 rounded-lg border border-slate-100 text-xs text-slate-800 whitespace-pre-wrap leading-relaxed max-h-72 overflow-y-auto" id="tpl-modal-body">
+        Template body content...
+      </div>
+
+      <div class="flex items-center justify-end gap-2 pt-2">
+        <button onclick="closeTemplateModal()" class="px-3.5 py-2 text-xs font-medium text-slate-600 hover:bg-slate-100 rounded-lg">Close</button>
+        <button id="btn-use-template-action" class="px-4 py-2 text-xs font-medium bg-brand-600 hover:bg-brand-700 text-white rounded-lg flex items-center gap-1.5">
+          <i data-lucide="edit-3" class="w-3.5 h-3.5"></i>
+          <span>Load into Compose</span>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ================= TOAST NOTIFICATION SYSTEM ================= -->
+  <div id="toast-container" class="fixed bottom-5 right-5 z-50 flex flex-col gap-2 pointer-events-none"></div>
+
+  <!-- ================= APPLICATION LOGIC SCRIPT ================= -->
+  <script>
+    // Initial State & Realistic Mock Data
+    const state = {
+      currentView: 'dashboard',
+      recentEmails: [
+        { id: 1, recipient: 'sarah.chen@stripe.com', name: 'Sarah Chen', company: 'Stripe', role: 'Senior Full-Stack Engineer', subject: 'Senior Full-Stack Engineer role at Stripe — Monu Shah', status: 'Sent', date: 'Oct 30, 2026', time: '11:42 AM' },
+        { id: 2, recipient: 'alex@linear.app', name: 'Alex Rivera', company: 'Linear', role: 'Frontend Engineer', subject: 'Frontend Engineer inquiry — Monu Shah', status: 'Opened', date: 'Oct 29, 2026', time: '3:15 PM' },
+        { id: 3, recipient: 'hiring@vercel.com', name: 'Marcus Vance', company: 'Vercel', role: 'Design Engineer', subject: 'Design Systems & Next.js contributor — Monu Shah', status: 'Replied', date: 'Oct 28, 2026', time: '5:20 PM' },
+        { id: 4, recipient: 'talent@openai.com', name: 'Elena Rostova', company: 'OpenAI', role: 'Full Stack Engineer, Dev Platform', subject: 'Application for Dev Platform Team — Monu Shah', status: 'Opened', date: 'Oct 26, 2026', time: '10:05 AM' },
+        { id: 5, recipient: 'dave@resend.com', name: 'David K.', company: 'Resend', role: 'Product Engineer', subject: 'Quick question regarding Resend Engineering', status: 'Sent', date: 'Oct 25, 2026', time: '2:14 PM' },
+        { id: 6, recipient: 'careers@figma.com', name: 'Rachel Green', company: 'Figma', role: 'Software Engineer', subject: 'Software Engineer Application — Monu Shah', status: 'Draft', date: 'Oct 24, 2026', time: '4:45 PM' },
+      ],
+      contacts: [
+        { id: 1, name: 'Sarah Chen', email: 'sarah.chen@stripe.com', company: 'Stripe', role: 'Senior Technical Recruiter', outreaches: 2, lastContact: 'Oct 30, 2026' },
+        { id: 2, name: 'Alex Rivera', email: 'alex@linear.app', company: 'Linear', role: 'Head of Talent', outreaches: 1, lastContact: 'Oct 29, 2026' },
+        { id: 3, name: 'Marcus Vance', email: 'hiring@vercel.com', company: 'Vercel', role: 'Staff Engineering Manager', outreaches: 3, lastContact: 'Oct 28, 2026' },
+        { id: 4, name: 'Elena Rostova', email: 'talent@openai.com', company: 'OpenAI', role: 'Technical Sourcing Lead', outreaches: 1, lastContact: 'Oct 26, 2026' },
+        { id: 5, name: 'David K.', email: 'dave@resend.com', company: 'Resend', role: 'Founding Engineer', outreaches: 1, lastContact: 'Oct 25, 2026' },
+        { id: 6, name: 'Priya Sharma', email: 'priya@notion.so', company: 'Notion', role: 'Lead Recruiter', outreaches: 4, lastContact: 'Oct 20, 2026' },
+      ],
+      templates: [
+        {
+          id: 'job-app',
+          title: 'Direct Job Application Pitch',
+          category: 'Job Application',
+          badge: 'High Response Rate',
+          description: 'A punchy, metric-driven pitch to the hiring manager for an active job post.',
+          subject: '{{role}} role at {{company}} — {{candidate_name}}',
+          body: `Hi {{recruiter_name}},
+
+I noticed {{company}} is expanding its team with a {{role}}, and given my background scaling high-performance web applications, I wanted to reach out directly.
+
+Over the past 5 years, I've specialized in React, TypeScript, and Node.js microservices. At my previous company, I architected a modular dashboard that reduced p99 latency by 35% and supported 500,000+ daily active users.
+
+Given {{company}}'s focus on product quality and engineering velocity, I would love to bring this same rigor to your team. You can review my work at {{portfolio}}.
+
+Do you have 10 minutes this Thursday or Friday for a brief introductory conversation?
+
+Best regards,
+{{candidate_name}}
+{{email}}`
+        },
+        {
+          id: 'cold-hr',
+          title: 'Cold Outreach to Recruiter',
+          category: 'Cold Email to HR',
+          badge: 'YC Style',
+          description: 'Ultra-concise, respectful cold email under 100 words designed for busy recruiters.',
+          subject: '{{candidate_name}} <> {{company}} ({{role}})',
+          body: `Hi {{recruiter_name}},
+
+I saw that you lead talent recruitment for engineering at {{company}}. 
+
+I am a full-stack engineer with 5+ years of production experience building modern web architectures with React, TypeScript, and cloud microservices. I've been closely following {{company}}'s recent product milestones and would love to be considered for open {{role}} opportunities.
+
+I've linked my recent projects and code here: {{portfolio}}
+
+Are you free for a brief 10-minute chat this week?
+
+Thanks for your time,
+{{candidate_name}}`
+        },
+        {
+          id: 'referral',
+          title: 'Warm Referral Request',
+          category: 'Referral Request',
+          badge: 'Networking',
+          description: 'Polite, low-pressure request for an internal referral from an existing engineer.',
+          subject: 'Quick question regarding engineering culture at {{company}}',
+          body: `Hi {{recruiter_name}},
+
+Hope you're having a productive week!
+
+I came across your profile and noticed the great work you're doing on {{company}}'s engineering team. I'm currently preparing an application for the {{role}} opening.
+
+Given my background in full-stack engineering and distributed systems, I felt a strong alignment with {{company}}'s technical direction.
+
+I would genuinely appreciate 5 minutes of your perspective on the team's engineering culture, or if you'd be comfortable passing along my resume for this role.
+
+Thanks so much for considering!
+
+Warmly,
+{{candidate_name}}
+{{portfolio}}`
+        },
+        {
+          id: 'followup',
+          title: 'Application Follow-Up Nudge',
+          category: 'Follow-up Email',
+          badge: 'Gentle Nudge',
+          description: 'Friendly follow-up 5-7 days after applying or initial outreach with new value add.',
+          subject: 'Following up: {{role}} application — {{candidate_name}}',
+          body: `Hi {{recruiter_name}},
+
+I know you have a packed schedule, so I wanted to send a quick follow-up regarding the {{role}} position at {{company}} that I applied for last week.
+
+In the meantime, I put together a quick notes doc on how I would approach scaling the real-time notification engine we discussed: {{portfolio}}
+
+I'm very enthusiastic about what {{company}} is building and would love to connect for a quick 10-minute call when your calendar permits.
+
+Best regards,
+{{candidate_name}}`
+        },
+        {
+          id: 'internship',
+          title: 'Internship & Early Career Outreach',
+          category: 'Internship Outreach',
+          badge: 'Student / Junior',
+          description: 'Demonstrates deep curiosity, proof of work, and proactive attitude.',
+          subject: 'Engineering Intern inquiry: {{company}} — {{candidate_name}}',
+          body: `Hi {{recruiter_name}},
+
+I'm reaching out because I've been inspired by {{company}}'s engineering blog and open-source contributions. 
+
+I'm an engineer passionate about TypeScript, React, and systems design. Recently, I built an open-source project that reached 1,200 stars on GitHub ({{portfolio}}).
+
+I'd love to know if {{company}} is considering software engineering interns or junior engineers this upcoming cycle. I'm eager to learn, contribute high-velocity code, and tackle challenging problems with the team.
+
+Thank you for your time and guidance!
+
+Sincerely,
+{{candidate_name}}`
+        },
+        {
+          id: 'value-pitch',
+          title: 'Product Idea & Value Pitch',
+          category: 'Cold Email to HR',
+          badge: 'High Impact',
+          description: 'Pitch a specific feature, bugfix, or improvement you can build for them on day one.',
+          subject: 'A small idea for {{company}}\'s developer onboarding — {{candidate_name}}',
+          body: `Hi {{recruiter_name}},
+
+I've been a heavy user of {{company}} and recently had an idea on how to streamline your API key onboarding flow to cut developer friction by an estimated 20%.
+
+As a full-stack engineer with 5+ years of experience in React and Node.js, these are the exact kinds of user-facing optimizations I love solving.
+
+I'd love to share my prototype mockup and chat about how I could contribute to {{company}}'s engineering team full-time.
+
+Are you open to a 10-minute chat this Thursday?
+
+Best,
+{{candidate_name}}
+{{portfolio}}`
+        }
+      ]
+    };
+
+    // Navigation Router
+    function navigateTo(viewId) {
+      state.currentView = viewId;
+
+      // Update sidebar nav highlighting
+      document.querySelectorAll('.nav-item').forEach(item => {
+        item.classList.remove('bg-brand-50', 'text-brand-700', 'font-semibold');
+        item.classList.add('text-slate-600');
+        const icon = item.querySelector('i');
+        if (icon) icon.classList.replace('text-brand-600', 'text-slate-400');
+      });
+
+      const activeNav = document.getElementById(`nav-${viewId}`);
+      if (activeNav) {
+        activeNav.classList.add('bg-brand-50', 'text-brand-700', 'font-semibold');
+        activeNav.classList.remove('text-slate-600');
+        const icon = activeNav.querySelector('i');
+        if (icon) icon.classList.replace('text-slate-400', 'text-brand-600');
+      }
+
+      // Hide all views & show current
+      const views = ['dashboard', 'compose', 'history', 'contacts', 'templates', 'analytics', 'settings'];
+      views.forEach(v => {
+        const el = document.getElementById(`view-${v}`);
+        if (el) el.classList.add('hidden');
+      });
+
+      const targetEl = document.getElementById(`view-${viewId}`);
+      if (targetEl) targetEl.classList.remove('hidden');
+
+      // Update breadcrumb title
+      const titles = {
+        dashboard: 'Dashboard',
+        compose: 'Compose Email',
+        history: 'Email History',
+        contacts: 'Contacts',
+        templates: 'Templates',
+        analytics: 'Analytics',
+        settings: 'Settings'
+      };
+      document.getElementById('current-view-title').textContent = titles[viewId] || 'Workspace';
+
+      // Close mobile sidebar if open
+      document.getElementById('sidebar').classList.add('-translate-x-full');
+
+      // Re-initialize Lucide icons
+      lucide.createIcons();
+    }
+
+    // Mobile Sidebar Toggle
+    document.getElementById('mobile-menu-toggle')?.addEventListener('click', () => {
+      document.getElementById('sidebar').classList.toggle('-translate-x-full');
+    });
+
+    // Populate Dashboard Recent Table
+    function renderDashboardRecent() {
+      const tbody = document.getElementById('dashboard-recent-tbody');
+      if (!tbody) return;
+      tbody.innerHTML = '';
+
+      const recentItems = state.recentEmails.slice(0, 5);
+      recentItems.forEach(item => {
+        const tr = document.createElement('tr');
+        tr.className = 'hover:bg-slate-50/70 transition-colors';
+
+        const statusBadge = getStatusBadge(item.status);
+
+        tr.innerHTML = `
+          <td class="py-3 px-4 font-medium text-slate-800">
+            <div>${escapeHtml(item.name)}</div>
+            <div class="text-[10px] text-slate-400 font-normal">${escapeHtml(item.recipient)}</div>
+          </td>
+          <td class="py-3 px-4 text-slate-600 font-medium">${escapeHtml(item.company)}</td>
+          <td class="py-3 px-4 text-slate-700 max-w-xs truncate" title="${escapeHtml(item.subject)}">${escapeHtml(item.subject)}</td>
+          <td class="py-3 px-4">${statusBadge}</td>
+          <td class="py-3 px-4 text-slate-400 text-[11px]">${item.date}</td>
+          <td class="py-3 px-4 text-right">
+            <button onclick="quickViewEmail(${item.id})" class="text-xs text-brand-600 hover:text-brand-800 font-medium hover:underline">View</button>
+          </td>
+        `;
+        tbody.appendChild(tr);
+      });
+    }
+
+    // Populate Full History Table
+    function renderFullHistory(items = state.recentEmails) {
+      const tbody = document.getElementById('history-full-tbody');
+      if (!tbody) return;
+      tbody.innerHTML = '';
+
+      if (items.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="6" class="py-8 text-center text-slate-400 text-xs">No emails found matching your filter.</td></tr>`;
+        return;
+      }
+
+      items.forEach(item => {
+        const tr = document.createElement('tr');
+        tr.className = 'hover:bg-slate-50/70 transition-colors';
+        const statusBadge = getStatusBadge(item.status);
+
+        tr.innerHTML = `
+          <td class="py-3 px-4 font-medium text-slate-800">
+            <div>${escapeHtml(item.name)}</div>
+            <div class="text-[10px] text-slate-400 font-normal">${escapeHtml(item.recipient)}</div>
+          </td>
+          <td class="py-3 px-4 text-slate-600 font-medium">${escapeHtml(item.company)}</td>
+          <td class="py-3 px-4 text-slate-700 max-w-sm truncate font-medium" title="${escapeHtml(item.subject)}">${escapeHtml(item.subject)}</td>
+          <td class="py-3 px-4 text-slate-400 text-[11px]">${item.date}</td>
+          <td class="py-3 px-4">${statusBadge}</td>
+          <td class="py-3 px-4 text-right space-x-2">
+            <button onclick="quickViewEmail(${item.id})" class="text-brand-600 hover:text-brand-800 font-medium">Open</button>
+            <button onclick="reSendEmail(${item.id})" class="text-slate-500 hover:text-slate-800">Resend</button>
+          </td>
+        `;
+        tbody.appendChild(tr);
+      });
+    }
+
+    // Populate Contacts Table
+    function renderContacts(items = state.contacts) {
+      const tbody = document.getElementById('contacts-tbody');
+      if (!tbody) return;
+      tbody.innerHTML = '';
+
+      items.forEach(contact => {
+        const tr = document.createElement('tr');
+        tr.className = 'hover:bg-slate-50/70 transition-colors';
+        tr.innerHTML = `
+          <td class="py-3.5 px-4 font-medium text-slate-900 flex items-center gap-2.5">
+            <div class="w-7 h-7 rounded-full bg-slate-100 border border-slate-200 text-slate-600 flex items-center justify-center font-semibold text-xs shrink-0">
+              ${contact.name.split(' ').map(n=>n[0]).join('')}
+            </div>
+            <div>
+              <div class="font-medium text-slate-800">${escapeHtml(contact.name)}</div>
+              <div class="text-[10px] text-slate-400 font-normal">${escapeHtml(contact.email)}</div>
+            </div>
+          </td>
+          <td class="py-3.5 px-4 font-semibold text-slate-700">${escapeHtml(contact.company)}</td>
+          <td class="py-3.5 px-4 text-slate-600">${escapeHtml(contact.role)}</td>
+          <td class="py-3.5 px-4">
+            <span class="inline-flex items-center px-2 py-0.5 rounded text-[10px] font-medium bg-slate-100 text-slate-700">${contact.outreaches} emails</span>
+          </td>
+          <td class="py-3.5 px-4 text-slate-400 text-[11px]">${contact.lastContact}</td>
+          <td class="py-3.5 px-4 text-right">
+            <button onclick="reachOutToContact('${contact.email}', '${contact.name}', '${contact.company}')" class="px-2.5 py-1 text-xs font-medium bg-brand-50 text-brand-700 hover:bg-brand-100 rounded-md transition-colors">
+              Send Email
+            </button>
+          </td>
+        `;
+        tbody.appendChild(tr);
+      });
+    }
+
+    // Populate Templates Cards
+    function renderTemplates() {
+      const grid = document.getElementById('templates-grid');
+      if (!grid) return;
+      grid.innerHTML = '';
+
+      state.templates.forEach(tpl => {
+        const card = document.createElement('div');
+        card.className = 'bg-white rounded-xl border border-slate-200/80 p-5 shadow-card hover:shadow-card-hover transition-all flex flex-col justify-between';
+        card.innerHTML = `
+          <div>
+            <div class="flex items-center justify-between mb-2">
+              <span class="text-[10px] font-semibold uppercase tracking-wider text-slate-400">${escapeHtml(tpl.category)}</span>
+              <span class="text-[10px] font-medium bg-brand-50 text-brand-700 border border-brand-200/50 px-2 py-0.5 rounded-full">${escapeHtml(tpl.badge)}</span>
+            </div>
+            <h3 class="text-sm font-semibold text-slate-900 mb-1.5">${escapeHtml(tpl.title)}</h3>
+            <p class="text-xs text-slate-500 line-clamp-2 mb-4">${escapeHtml(tpl.description)}</p>
+          </div>
+          <div class="pt-3 border-t border-slate-100 flex items-center justify-between">
+            <button onclick="previewTemplate('${tpl.id}')" class="text-xs font-medium text-slate-500 hover:text-slate-800">Preview</button>
+            <button onclick="useTemplate('${tpl.id}')" class="px-3 py-1 text-xs font-medium bg-brand-600 hover:bg-brand-700 text-white rounded-md transition-colors flex items-center gap-1">
+              <span>Use Template</span>
+              <i data-lucide="arrow-right" class="w-3 h-3"></i>
+            </button>
+          </div>
+        `;
+        grid.appendChild(card);
+      });
+    }
+
+    function getStatusBadge(status) {
+      if (status === 'Sent') {
+        return `<span class="inline-flex items-center gap-1 text-[11px] font-medium text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded-md border border-emerald-200/60"><span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>Sent</span>`;
+      } else if (status === 'Opened') {
+        return `<span class="inline-flex items-center gap-1 text-[11px] font-medium text-blue-700 bg-blue-50 px-2 py-0.5 rounded-md border border-blue-200/60"><span class="w-1.5 h-1.5 rounded-full bg-blue-500"></span>Opened</span>`;
+      } else if (status === 'Replied') {
+        return `<span class="inline-flex items-center gap-1 text-[11px] font-medium text-purple-700 bg-purple-50 px-2 py-0.5 rounded-md border border-purple-200/60"><span class="w-1.5 h-1.5 rounded-full bg-purple-500"></span>Replied</span>`;
+      } else {
+        return `<span class="inline-flex items-center gap-1 text-[11px] font-medium text-slate-600 bg-slate-100 px-2 py-0.5 rounded-md"><span class="w-1.5 h-1.5 rounded-full bg-slate-400"></span>Draft</span>`;
+      }
+    }
+
+    // AI Generation Handler with simulated high-IQ copywriting
+    function handleGenerateEmail() {
+      const email = document.getElementById('compose-email').value.trim();
+      const company = document.getElementById('compose-company').value.trim();
+      const role = document.getElementById('compose-role').value.trim();
+      const name = document.getElementById('compose-name').value.trim() || 'Hiring Team';
+      const jd = document.getElementById('compose-jd').value.trim();
+      const intro = document.getElementById('compose-sender-intro').value.trim();
+      const instructions = document.getElementById('compose-instructions').value.trim();
+      const tone = document.querySelector('input[name="email-tone"]:checked')?.value || 'professional';
+      const length = document.querySelector('input[name="email-length"]:checked')?.value || 'short';
+
+      if (!company || !role) {
+        showToast('Please enter at least the Company Name and Target Role.', 'error');
+        return;
+      }
+
+      // UI Loading state
+      const overlay = document.getElementById('ai-loading-overlay');
+      const loadText = document.getElementById('ai-loading-text');
+      const genBtn = document.getElementById('btn-generate-ai');
+      
+      overlay.classList.remove('hidden');
+      genBtn.disabled = true;
+
+      const steps = [
+        `Reading job description for ${role} at ${company}...`,
+        'Highlighting Monu Shah\'s top relevant achievements...',
+        `Synthesizing ${tone} cold pitch with clear call to action...`
+      ];
+
+      let step = 0;
+      const interval = setInterval(() => {
+        step++;
+        if (step < steps.length) {
+          loadText.textContent = steps[step];
+        }
+      }, 550);
+
+      setTimeout(() => {
+        clearInterval(interval);
+        overlay.classList.add('hidden');
+        genBtn.disabled = false;
+
+        // Generate tailored response
+        const candidateName = 'Monu Shah';
+        const candidateEmail = 'monushah108@gmail.com';
+        const portfolio = 'https://github.com/monushah108';
+
+        let subject = '';
+        let body = '';
+
+        if (tone === 'confident') {
+          subject = `${candidateName} <> ${company} (${role})`;
+          body = `Hi ${name.split(' ')[0]},
+
+I noticed ${company} is expanding its engineering team with a ${role}.
+
+With 5+ years building scalable, high-throughput web applications in React, TypeScript, and Node.js microservices, I've previously built production architectures that reduced latency by 35% and scaled to millions of active users.
+
+Given ${company}'s current growth and commitment to developer velocity, I would welcome the opportunity to contribute immediately to your roadmap. You can view my recent work and open source projects here: ${portfolio}.
+
+Do you have 10 minutes this Thursday or Friday for a brief introductory conversation?
+
+Best regards,
+${candidateName}
+${candidateEmail}`;
+        } else if (tone === 'friendly') {
+          subject = `Quick question regarding ${company} & the ${role} opening`;
+          body = `Hi ${name.split(' ')[0]},
+
+Hope you're having a wonderful week!
+
+I've been a huge fan of ${company}'s recent product updates and was thrilled to see the opening for a ${role}. 
+
+My background is centered around React, modern TypeScript, and clean backend APIs. Over the past few years, I've loved building products that delight users and move engineering metrics forward.
+
+I'd genuinely love to hear your perspective on what the team is working on right now and discuss how my background could support your goals.
+
+Would you be open to a 10-minute chat this week?
+
+Warmly,
+${candidateName}
+${portfolio}`;
+        } else {
+          // Professional & Default
+          subject = `${role} role at ${company} — ${candidateName}`;
+          body = `Hi ${name.split(' ')[0]},
+
+I noticed ${company} is actively seeking a ${role}, and given my experience designing reliable, modern web applications, I wanted to reach out directly.
+
+Throughout my career as a full-stack engineer, I have focused on building performant interfaces and resilient backend systems:
+• Deep proficiency with React, TypeScript, and Node.js microservices.
+• Proven track record reducing system latency by 35% across high-traffic platforms.
+• Passion for clean architectural patterns and collaborative engineering culture.
+
+I would love to learn more about ${company}'s technical priorities this quarter and explore how my experience aligns with the team's needs. You can review my code and projects at ${portfolio}.
+
+Are you available for a brief 10-minute call this Thursday or Friday?
+
+Thank you for your time and consideration.
+
+Best regards,
+${candidateName}
+${candidateEmail} | +91 98765 43210`;
+        }
+
+        // Populate fields
+        document.getElementById('preview-subject').value = subject;
+        document.getElementById('email-preview-body').innerText = body;
+        document.getElementById('preview-to').textContent = email || `${name.toLowerCase().replace(/\s+/g, '.')}@${company.toLowerCase().replace(/[^a-z]/g, '')}.com`;
+        updatePreviewWordCount();
+
+        showToast('Personalized email drafted successfully!', 'success');
+      }, 1600);
+    }
+
+    // Rich Text Formatting helper
+    function formatDoc(command) {
+      if (command === 'createLink') {
+        const url = prompt('Enter the link URL (e.g. https://github.com/monushah108):', 'https://');
+        if (url) document.execCommand(command, false, url);
+      } else {
+        document.execCommand(command, false, null);
+      }
+      updatePreviewWordCount();
+    }
+
+    function updatePreviewWordCount() {
+      const text = document.getElementById('email-preview-body').innerText.trim();
+      const words = text ? text.split(/\s+/).length : 0;
+      document.getElementById('preview-word-count').textContent = `${words} words`;
+    }
+
+    document.getElementById('email-preview-body')?.addEventListener('input', updatePreviewWordCount);
+
+    // Regenerate variation
+    function handleRegenerate() {
+      handleGenerateEmail();
+    }
+
+    // Copy Preview
+    function handleCopyPreview() {
+      const subject = document.getElementById('preview-subject').value.trim();
+      const body = document.getElementById('email-preview-body').innerText.trim();
+      const full = `Subject: ${subject}\n\n${body}`;
+
+      navigator.clipboard.writeText(full).then(() => {
+        showToast('Copied full email and subject to clipboard!', 'success');
+      });
+    }
+
+    // Save as Draft
+    function handleSaveDraft() {
+      const company = document.getElementById('compose-company').value.trim() || 'Undisclosed';
+      const recipient = document.getElementById('compose-email').value.trim() || 'recruiter@company.com';
+      const name = document.getElementById('compose-name').value.trim() || 'Recruiter';
+      const subject = document.getElementById('preview-subject').value.trim();
+
+      const newDraft = {
+        id: Date.now(),
+        recipient,
+        name,
+        company,
+        role: document.getElementById('compose-role').value.trim() || 'Engineer',
+        subject: subject || 'Draft Pitch',
+        status: 'Draft',
+        date: 'Today',
+        time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+      };
+
+      state.recentEmails.unshift(newDraft);
+      renderDashboardRecent();
+      renderFullHistory();
+      showToast('Pitch saved to Drafts!', 'success');
+    }
+
+    // Send Email Flow & Confirmation
+    function openSendConfirmDialog() {
+      const recipient = document.getElementById('compose-email').value.trim() || document.getElementById('preview-to').textContent.trim();
+      const company = document.getElementById('compose-company').value.trim() || 'Company';
+      const subject = document.getElementById('preview-subject').value.trim();
+
+      if (!recipient || !recipient.includes('@')) {
+        showToast('Please provide a valid recipient email address.', 'error');
+        return;
+      }
+
+      document.getElementById('confirm-recipient').textContent = recipient;
+      document.getElementById('confirm-company').textContent = company;
+      document.getElementById('confirm-subject').textContent = subject;
+      document.getElementById('modal-send-confirm').classList.remove('hidden');
+    }
+
+    function closeSendConfirmDialog() {
+      document.getElementById('modal-send-confirm').classList.add('hidden');
+    }
+
+    function executeSendEmail() {
+      const recipient = document.getElementById('confirm-recipient').textContent;
+      const company = document.getElementById('confirm-company').textContent;
+      const subject = document.getElementById('confirm-subject').textContent;
+      const name = document.getElementById('compose-name').value.trim() || 'Recruiter';
+
+      closeSendConfirmDialog();
+
+      // Add to sent history
+      const newSent = {
+        id: Date.now(),
+        recipient,
+        name,
+        company,
+        role: document.getElementById('compose-role').value.trim() || 'Engineer',
+        subject,
+        status: 'Sent',
+        date: 'Today',
+        time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+      };
+
+      state.recentEmails.unshift(newSent);
+      
+      // Update counters
+      const totalSentEl = document.getElementById('stat-total-sent');
+      if (totalSentEl) {
+        totalSentEl.textContent = parseInt(totalSentEl.textContent) + 1;
+      }
+
+      renderDashboardRecent();
+      renderFullHistory();
+      showToast(`Email dispatched to ${recipient} successfully!`, 'success');
+
+      // Also give user option to open in Gmail compose
+      setTimeout(() => {
+        showToast('Click "Open in Gmail" if you want to inspect in your native inbox.', 'info');
+      }, 2500);
+    }
+
+    function openInGmailDirect() {
+      const to = document.getElementById('compose-email').value.trim() || document.getElementById('preview-to').textContent.trim();
+      const subject = document.getElementById('preview-subject').value.trim();
+      const body = document.getElementById('email-preview-body').innerText.trim();
+
+      const url = `https://mail.google.com/mail/?view=cm&fs=1&to=${encodeURIComponent(to)}&su=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+      window.open(url, '_blank');
+      showToast('Opening Gmail compose tab...', 'info');
+    }
+
+    // Template Actions
+    function previewTemplate(tplId) {
+      const tpl = state.templates.find(t => t.id === tplId);
+      if (!tpl) return;
+
+      document.getElementById('tpl-modal-title').textContent = tpl.title;
+      document.getElementById('tpl-modal-category').textContent = `${tpl.category} • ${tpl.badge}`;
+      document.getElementById('tpl-modal-body').textContent = tpl.body;
+
+      const useBtn = document.getElementById('btn-use-template-action');
+      useBtn.onclick = () => {
+        closeTemplateModal();
+        useTemplate(tplId);
+      };
+
+      document.getElementById('modal-template-preview').classList.remove('hidden');
+    }
+
+    function closeTemplateModal() {
+      document.getElementById('modal-template-preview').classList.add('hidden');
+    }
+
+    function useTemplate(tplId) {
+      const tpl = state.templates.find(t => t.id === tplId);
+      if (!tpl) return;
+
+      navigateTo('compose');
+
+      const company = document.getElementById('compose-company').value.trim() || 'Stripe';
+      const role = document.getElementById('compose-role').value.trim() || 'Senior Full-Stack Engineer';
+      const recruiterName = document.getElementById('compose-name').value.trim() || 'Sarah';
+
+      let filledSubject = tpl.subject
+        .replace(/{{role}}/g, role)
+        .replace(/{{company}}/g, company)
+        .replace(/{{candidate_name}}/g, 'Monu Shah');
+
+      let filledBody = tpl.body
+        .replace(/{{role}}/g, role)
+        .replace(/{{company}}/g, company)
+        .replace(/{{recruiter_name}}/g, recruiterName)
+        .replace(/{{candidate_name}}/g, 'Monu Shah')
+        .replace(/{{email}}/g, 'monushah108@gmail.com')
+        .replace(/{{portfolio}}/g, 'https://github.com/monushah108');
+
+      document.getElementById('preview-subject').value = filledSubject;
+      document.getElementById('email-preview-body').innerText = filledBody;
+      updatePreviewWordCount();
+
+      showToast(`Loaded "${tpl.title}" into editor!`, 'success');
+    }
+
+    // Contacts Actions
+    function reachOutToContact(email, name, company) {
+      navigateTo('compose');
+      document.getElementById('compose-email').value = email;
+      document.getElementById('compose-name').value = name;
+      document.getElementById('compose-company').value = company;
+      document.getElementById('preview-to').textContent = email;
+      showToast(`Contact ${name} loaded. Click Generate to pitch!`, 'info');
+    }
+
+    function openAddContactModal() {
+      document.getElementById('modal-add-contact').classList.remove('hidden');
+    }
+    function closeAddContactModal() {
+      document.getElementById('modal-add-contact').classList.add('hidden');
+    }
+    function handleSaveNewContact() {
+      const name = document.getElementById('new-contact-name').value.trim();
+      const email = document.getElementById('new-contact-email').value.trim();
+      const company = document.getElementById('new-contact-company').value.trim();
+      const role = document.getElementById('new-contact-role').value.trim();
+
+      if (!name || !email) {
+        showToast('Please provide a name and email.', 'error');
+        return;
+      }
+
+      state.contacts.unshift({
+        id: Date.now(),
+        name,
+        email,
+        company: company || 'Tech Company',
+        role: role || 'Recruiter',
+        outreaches: 0,
+        lastContact: 'Just now'
+      });
+
+      renderContacts();
+      closeAddContactModal();
+      showToast(`Contact "${name}" added!`, 'success');
+    }
+
+    // Search & Filter Handlers
+    function filterHistory(filterType) {
+      document.querySelectorAll('.hist-filter-btn').forEach(btn => {
+        btn.classList.remove('bg-slate-100', 'text-slate-900');
+        btn.classList.add('text-slate-600');
+      });
+      document.querySelector(`[data-filter="${filterType}"]`)?.classList.add('bg-slate-100', 'text-slate-900');
+
+      if (filterType === 'all') {
+        renderFullHistory(state.recentEmails);
+      } else {
+        const filtered = state.recentEmails.filter(i => i.status.toLowerCase() === filterType.toLowerCase());
+        renderFullHistory(filtered);
+      }
+    }
+
+    function handleHistorySearch() {
+      const q = document.getElementById('history-search-input').value.toLowerCase();
+      const filtered = state.recentEmails.filter(i => 
+        i.name.toLowerCase().includes(q) || 
+        i.company.toLowerCase().includes(q) || 
+        i.recipient.toLowerCase().includes(q) ||
+        i.subject.toLowerCase().includes(q)
+      );
+      renderFullHistory(filtered);
+    }
+
+    function handleContactsSearch() {
+      const q = document.getElementById('contacts-search-input').value.toLowerCase();
+      const filtered = state.contacts.filter(c => 
+        c.name.toLowerCase().includes(q) || 
+        c.company.toLowerCase().includes(q) || 
+        c.role.toLowerCase().includes(q) ||
+        c.email.toLowerCase().includes(q)
+      );
+      renderContacts(filtered);
+    }
+
+    // Sample Opportunity Loader
+    function loadSampleOpportunity() {
+      document.getElementById('compose-email').value = 'sarah.chen@stripe.com';
+      document.getElementById('compose-name').value = 'Sarah Chen';
+      document.getElementById('compose-company').value = 'Stripe';
+      document.getElementById('compose-role').value = 'Senior Full-Stack Engineer';
+      document.getElementById('compose-jd').value = `Responsibilities:
+• Architect, build, and maintain high-performance payments and developer tools.
+• Work with React, TypeScript, and high-throughput microservices.
+• Champion sub-50ms latency and high developer velocity.
+
+Requirements:
+• 5+ years building distributed web applications at scale.
+• Deep proficiency in TypeScript, React, and backend API design.`;
+
+      document.getElementById('compose-sender-intro').value = `5+ years building full-stack platforms with React, Node, and TypeScript. Reduced p99 latency 35% at TechCorp. Built microservices serving 500k daily users.`;
+      document.getElementById('compose-instructions').value = `Keep tone confident, emphasize startup speed, mention Stripe's developer focus.`;
+
+      document.getElementById('preview-to').textContent = 'sarah.chen@stripe.com';
+
+      showToast('Loaded sample job for Stripe Senior Full-Stack Engineer!', 'info');
+      handleGenerateEmail();
+    }
+
+    function resetComposeForm() {
+      document.getElementById('compose-email').value = '';
+      document.getElementById('compose-name').value = '';
+      document.getElementById('compose-company').value = '';
+      document.getElementById('compose-role').value = '';
+      document.getElementById('compose-jd').value = '';
+      document.getElementById('compose-instructions').value = '';
+      document.getElementById('preview-subject').value = '';
+      document.getElementById('email-preview-body').innerText = '';
+      document.getElementById('preview-to').textContent = 'recruiter@company.com';
+      updatePreviewWordCount();
+      showToast('Compose inputs cleared.', 'info');
+    }
+
+    function quickViewEmail(id) {
+      const item = state.recentEmails.find(e => e.id === id);
+      if (!item) return;
+
+      navigateTo('compose');
+      document.getElementById('compose-email').value = item.recipient;
+      document.getElementById('compose-name').value = item.name;
+      document.getElementById('compose-company').value = item.company;
+      document.getElementById('compose-role').value = item.role;
+      document.getElementById('preview-to').textContent = item.recipient;
+      document.getElementById('preview-subject').value = item.subject;
+      showToast(`Loaded ${item.company} pitch into editor.`, 'info');
+    }
+
+    function reSendEmail(id) {
+      quickViewEmail(id);
+      openSendConfirmDialog();
+    }
+
+    function exportHistoryCsv() {
+      let csv = 'Recipient Name,Email,Company,Role,Subject,Status,Date\n';
+      state.recentEmails.forEach(e => {
+        csv += `"${e.name}","${e.recipient}","${e.company}","${e.role}","${e.subject}","${e.status}","${e.date}"\n`;
+      });
+
+      const blob = new Blob([csv], { type: 'text/csv' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `pitchcraft-outreach-history-${new Date().toISOString().slice(0,10)}.csv`;
+      a.click();
+      showToast('Exported outreach history to CSV!', 'success');
+    }
+
+    function handleSaveSettings() {
+      showToast('Settings & Profile preferences saved!', 'success');
+    }
+
+    // Toast Notification System
+    function showToast(message, type = 'info') {
+      const container = document.getElementById('toast-container');
+      const toast = document.createElement('div');
+      
+      const colors = {
+        success: 'bg-emerald-800 text-white border-emerald-700',
+        error: 'bg-rose-800 text-white border-rose-700',
+        info: 'bg-slate-900 text-white border-slate-800'
+      };
+
+      toast.className = `px-4 py-2.5 rounded-lg border shadow-lg text-xs font-medium flex items-center gap-2 pointer-events-auto transition-all transform duration-200 translate-y-2 opacity-0 ${colors[type] || colors.info}`;
+      
+      const icon = type === 'success' ? 'check-circle-2' : type === 'error' ? 'alert-circle' : 'info';
+      toast.innerHTML = `<i data-lucide="${icon}" class="w-4 h-4 shrink-0"></i><span>${escapeHtml(message)}</span>`;
+      
+      container.appendChild(toast);
+      lucide.createIcons();
+
+      // Animate in
+      requestAnimationFrame(() => {
+        toast.classList.remove('translate-y-2', 'opacity-0');
+      });
+
+      setTimeout(() => {
+        toast.classList.add('opacity-0', 'translate-y-2');
+        setTimeout(() => toast.remove(), 250);
+      }, 3200);
+    }
+
+    function escapeHtml(str) {
+      if (!str) return '';
+      return String(str)
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#039;');
+    }
+
+    // App Initialization
+    document.addEventListener('DOMContentLoaded', () => {
+      renderDashboardRecent();
+      renderFullHistory();
+      renderContacts();
+      renderTemplates();
+      updatePreviewWordCount();
+      navigateTo('dashboard');
+      lucide.createIcons();
+    });
+  </script>
+</body>
+</html>
