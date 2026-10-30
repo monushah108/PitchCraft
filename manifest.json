@@ -1,0 +1,40 @@
+{
+  "manifest_version": 3,
+  "name": "PitchCraft AI - Smart Resume Cold Emailer",
+  "version": "1.0.0",
+  "description": "Generate hyper-personalized cold emails and job applications from your resume & job descriptions using AI, and send instantly via Gmail.",
+  "permissions": [
+    "storage",
+    "activeTab",
+    "scripting",
+    "sidePanel"
+  ],
+  "action": {
+    "default_popup": "popup.html",
+    "default_title": "PitchCraft AI - Email Sender",
+    "default_icon": {
+      "16": "icons/icon16.png",
+      "48": "icons/icon48.png",
+      "128": "icons/icon128.png"
+    }
+  },
+  "side_panel": {
+    "default_path": "sidepanel.html"
+  },
+  "background": {
+    "service_worker": "background.js"
+  },
+  "content_scripts": [
+    {
+      "matches": ["<all_urls>"],
+      "js": ["content.js"],
+      "css": ["content.css"],
+      "run_at": "document_idle"
+    }
+  ],
+  "icons": {
+    "16": "icons/icon16.png",
+    "48": "icons/icon48.png",
+    "128": "icons/icon128.png"
+  }
+}

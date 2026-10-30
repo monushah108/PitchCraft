@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>PitchCraft AI - Interactive Test & Live Preview Sandbox</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      background: radial-gradient(circle at top center, #1e1b4b 0%, #0b0f19 80%);
+      color: #f8fafc;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 30px 20px;
+    }
+    .hero {
+      text-align: center;
+      max-width: 750px;
+      margin-bottom: 30px;
+    }
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 4px 12px;
+      background: rgba(99, 102, 241, 0.2);
+      border: 1px solid rgba(99, 102, 241, 0.4);
+      border-radius: 9999px;
+      color: #a5b4fc;
+      font-size: 12px;
+      font-weight: 600;
+      margin-bottom: 12px;
+    }
+    h1 {
+      font-size: 32px;
+      font-weight: 800;
+      background: linear-gradient(135deg, #ffffff 30%, #a5b4fc 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      margin-bottom: 8px;
+    }
+    p.sub {
+      color: #94a3b8;
+      font-size: 15px;
+    }
+    .preview-container {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 30px;
+      max-width: 1200px;
+      width: 100%;
+    }
+    .device-frame {
+      width: 500px;
+      height: 640px;
+      background: #000;
+      border-radius: 20px;
+      padding: 10px;
+      box-shadow: 0 25px 60px -15px rgba(0, 0, 0, 0.8), 0 0 30px rgba(99, 102, 241, 0.25);
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      display: flex;
+      flex-direction: column;
+    }
+    .device-header {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      padding: 6px 10px 10px 10px;
+    }
+    .dot { width: 10px; height: 10px; border-radius: 50%; }
+    .dot.red { background: #ef4444; }
+    .dot.yellow { background: #f59e0b; }
+    .dot.green { background: #10b981; }
+    .device-title {
+      font-size: 11px;
+      color: #64748b;
+      margin-left: 8px;
+    }
+    iframe {
+      width: 100%;
+      height: 100%;
+      border: none;
+      border-radius: 12px;
+      background: #0b0f19;
+    }
+    .guide-card {
+      flex: 1;
+      min-width: 320px;
+      max-width: 480px;
+      background: rgba(22, 31, 51, 0.7);
+      backdrop-filter: blur(12px);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 16px;
+      padding: 24px;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+    .guide-card h3 {
+      color: #ffffff;
+      font-size: 18px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .step-item {
+      display: flex;
+      gap: 12px;
+    }
+    .step-num {
+      width: 26px;
+      height: 26px;
+      border-radius: 50%;
+      background: #6366f1;
+      color: #ffffff;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 12px;
+      font-weight: 700;
+      flex-shrink: 0;
+    }
+    .step-content strong {
+      display: block;
+      color: #ffffff;
+      font-size: 14px;
+      margin-bottom: 2px;
+    }
+    .step-content p {
+      color: #94a3b8;
+      font-size: 13px;
+      line-height: 1.4;
+    }
+    .btn-action-link {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      padding: 10px 18px;
+      background: linear-gradient(135deg, #6366f1, #06b6d4);
+      color: #ffffff;
+      text-decoration: none;
+      border-radius: 8px;
+      font-weight: 600;
+      font-size: 13px;
+      margin-top: 8px;
+      transition: transform 0.2s;
+    }
+    .btn-action-link:hover {
+      transform: translateY(-2px);
+    }
+  </style>
+</head>
+<body>
+  <div class="hero">
+    <div class="badge">🚀 Chrome / Edge Manifest V3 Extension Ready</div>
+    <h1>PitchCraft AI Extension Studio</h1>
+    <p class="sub">Test the complete interactive extension UI right below, or load it unpacked into your browser.</p>
+  </div>
+
+  <div class="preview-container">
+    <!-- Extension Live Frame -->
+    <div class="device-frame">
+      <div class="device-header">
+        <span class="dot red"></span>
+        <span class="dot yellow"></span>
+        <span class="dot green"></span>
+        <span class="device-title">PitchCraft AI Extension Popup (Live Interactive Simulation)</span>
+      </div>
+      <iframe src="popup.html"></iframe>
+    </div>
+
+    <!-- Instructions & Test Job -->
+    <div class="guide-card">
+      <h3>⚡ Quick Installation Guide</h3>
+      
+      <div class="step-item">
+        <div class="step-num">1</div>
+        <div class="step-content">
+          <strong>Open Chrome Extensions</strong>
+          <p>Navigate to <code>chrome://extensions</code> in Chrome or Edge and switch on <strong>Developer Mode</strong> (top right toggle).</p>
+        </div>
+      </div>
+
+      <div class="step-item">
+        <div class="step-num">2</div>
+        <div class="step-content">
+          <strong>Load Unpacked Extension</strong>
+          <p>Click <strong>"Load unpacked"</strong> and select this folder:<br><code>c:\Users\Sonu\Desktop\emailer</code></p>
+        </div>
+      </div>
+
+      <div class="step-item">
+        <div class="step-num">3</div>
+        <div class="step-content">
+          <strong>Upload Your Resume & Configure AI</strong>
+          <p>Click the extension icon, drop your PDF resume, and enter your free Gemini API key (or use the built-in offline smart engine with zero setup!).</p>
+        </div>
+      </div>
+
+      <div class="step-item">
+        <div class="step-num">4</div>
+        <div class="step-content">
+          <strong>Test with Sample Job Posting</strong>
+          <p>Open our realistic test job posting below to test auto-extraction and 1-click Gmail sending:</p>
+          <a href="sample-job.html" target="_blank" class="btn-action-link">Open Sample Job Page ↗</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</body>
+</html>
