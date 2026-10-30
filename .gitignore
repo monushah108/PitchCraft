@@ -1,0 +1,16 @@
+# Secrets & Environment variables
+.env
+.env*.local
+*.pem
+*.key
+
+# Test & Personal Resumes
+*.pdf
+resume.txt
+
+# OS & Editor files
+.DS_Store
+Thumbs.db
+*.log
+.vscode/
+.idea/
