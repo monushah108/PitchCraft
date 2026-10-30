@@ -7,7 +7,6 @@ import {
   Search,
   Mail,
   Building,
-  Linkedin,
   MoreVertical,
   Sparkles,
   ExternalLink,

@@ -10,8 +10,8 @@ import {
   Check,
   Zap,
   Globe,
-  Github,
-  Linkedin,
+  Code2,
+  Link2,
   Key,
 } from "lucide-react";
 import { EmailTone, EmailLength } from "../app/types";
@@ -143,7 +143,7 @@ export function SettingsView({
 
             <div>
               <label className="text-xs font-medium text-slate-700 flex items-center gap-1.5">
-                <Github className="h-3 w-3 text-slate-400" />
+                <Code2 className="h-3 w-3 text-slate-400" />
                 GitHub URL
               </label>
               <input
@@ -156,7 +156,7 @@ export function SettingsView({
 
             <div>
               <label className="text-xs font-medium text-slate-700 flex items-center gap-1.5">
-                <Linkedin className="h-3 w-3 text-slate-400" />
+                <Link2 className="h-3 w-3 text-slate-400" />
                 LinkedIn URL
               </label>
               <input
