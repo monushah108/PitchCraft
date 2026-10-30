@@ -17,7 +17,12 @@ export const metadata: Metadata = {
   description:
     "Generate hyper-personalized, high-converting outreach emails to recruiters and hiring managers. Inspired by Linear, Stripe, and Resend.",
   icons: {
-    icon: "/favicon.ico",
+    icon: [
+      { url: "/favicon.svg", type: "image/svg+xml" },
+      { url: "/icon.svg", type: "image/svg+xml" },
+    ],
+    shortcut: "/favicon.svg",
+    apple: "/favicon.svg",
   },
 };
 
