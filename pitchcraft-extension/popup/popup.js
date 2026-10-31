@@ -23,6 +23,8 @@ document.addEventListener("DOMContentLoaded", async () => {
   const outputBody = document.getElementById("output-body");
   const btnCopyPitch = document.getElementById("btn-copy-pitch");
   const btnSaveDraft = document.getElementById("btn-save-draft");
+  const btnSaveToHistoryMain = document.getElementById("btn-save-to-history-main");
+  const historyBadge = document.getElementById("history-badge");
   const btnInsertGmail = document.getElementById("btn-insert-gmail");
   const btnOpenGmailCompose = document.getElementById("btn-open-gmail-compose");
 
@@ -240,7 +242,10 @@ document.addEventListener("DOMContentLoaded", async () => {
         body: result.body
       });
 
-      showToast("Pitch crafted successfully!", "success");
+      // Automatically record to History so user never loses generated outreach
+      await saveCurrentPitchToHistory(true);
+
+      showToast("Pitch crafted & saved to history!", "success");
 
       // Smooth scroll to output
       outputSubject.scrollIntoView({ behavior: "smooth" });
@@ -258,7 +263,67 @@ document.addEventListener("DOMContentLoaded", async () => {
     }
   });
 
-  // 5. Copy Pitch
+  // 5. Update History Badge Counter
+  async function updateHistoryBadge() {
+    if (!historyBadge) return;
+    const history = await PitchCraftStorage.getHistory();
+    const count = Array.isArray(history) ? history.length : 0;
+    historyBadge.textContent = count;
+    historyBadge.style.display = count > 0 ? "inline-flex" : "none";
+  }
+
+  // 6. Save Pitch to History
+  async function saveCurrentPitchToHistory(silent = false) {
+    if (!outputBody.value) {
+      if (!silent) showToast("No pitch generated yet to save", "error");
+      return false;
+    }
+
+    const item = {
+      id: "hist-" + Date.now(),
+      recipientName: inputRecipientName.value.trim() || "Prospect",
+      recipientEmail: inputRecipientEmail.value.trim() || "",
+      company: inputCompanyName.value.trim() || "Company",
+      jobPosition: inputJobPosition.value.trim() || "Role",
+      subject: outputSubject.value.trim(),
+      body: outputBody.value.trim(),
+      tone: selectedTone,
+      length: selectedLength,
+      date: new Date().toLocaleDateString("en-US", {
+        month: "short",
+        day: "numeric",
+        hour: "2-digit",
+        minute: "2-digit"
+      }),
+      timestamp: Date.now(),
+      status: "Saved"
+    };
+
+    await PitchCraftStorage.addHistory(item);
+    await updateHistoryBadge();
+
+    if (!silent) {
+      showToast("Saved to Outreach History!", "success");
+      if (btnSaveToHistoryMain) {
+        const origHtml = btnSaveToHistoryMain.innerHTML;
+        btnSaveToHistoryMain.innerHTML = `
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"></polyline></svg>
+          <span>Saved!</span>
+        `;
+        setTimeout(() => {
+          btnSaveToHistoryMain.innerHTML = origHtml;
+        }, 2000);
+      }
+    }
+    return true;
+  }
+
+  if (btnSaveToHistoryMain) {
+    btnSaveToHistoryMain.addEventListener("click", () => saveCurrentPitchToHistory(false));
+  }
+  btnSaveDraft.addEventListener("click", () => saveCurrentPitchToHistory(false));
+
+  // 7. Copy Pitch
   btnCopyPitch.addEventListener("click", async () => {
     const textToCopy = `${outputSubject.value}\n\n${outputBody.value}`;
     if (!outputBody.value) {
@@ -267,32 +332,6 @@ document.addEventListener("DOMContentLoaded", async () => {
     }
     await navigator.clipboard.writeText(textToCopy);
     showToast("Pitch copied to clipboard!", "success");
-  });
-
-  // 6. Save to History
-  btnSaveDraft.addEventListener("click", async () => {
-    if (!outputBody.value) {
-      showToast("No pitch to save", "error");
-      return;
-    }
-
-    const item = {
-      id: "hist-" + Date.now(),
-      recipientName: inputRecipientName.value || "Prospect",
-      recipientEmail: inputRecipientEmail.value || "",
-      company: inputCompanyName.value || "Company",
-      jobPosition: inputJobPosition.value || "Role",
-      subject: outputSubject.value,
-      body: outputBody.value,
-      tone: selectedTone,
-      length: selectedLength,
-      date: new Date().toLocaleDateString("en-US", { month: "short", day: "numeric", hour: "2-digit", minute: "2-digit" }),
-      timestamp: Date.now(),
-      status: "Draft"
-    };
-
-    await PitchCraftStorage.addHistory(item);
-    showToast("Saved to Outreach History!", "success");
   });
 
   // 7. Insert into Gmail
@@ -424,9 +463,21 @@ document.addEventListener("DOMContentLoaded", async () => {
   async function renderHistory() {
     const history = await PitchCraftStorage.getHistory();
     historyList.innerHTML = "";
+    await updateHistoryBadge();
 
-    if (history.length === 0) {
-      historyList.innerHTML = `<div style="text-align:center; padding: 24px; color: var(--text-muted);">No saved pitches yet. Generate pitches to see them here!</div>`;
+    if (!Array.isArray(history) || history.length === 0) {
+      historyList.innerHTML = `
+        <div class="history-empty-state">
+          <div class="empty-icon">📭</div>
+          <div class="empty-title">No Email History Found</div>
+          <div class="empty-desc">Pitches you generate or click "Save to History" will be stored here.</div>
+          <button type="button" class="btn-use-tpl" id="btn-empty-go-compose">Draft New Pitch</button>
+        </div>
+      `;
+      const btnGoCompose = document.getElementById("btn-empty-go-compose");
+      if (btnGoCompose) {
+        btnGoCompose.addEventListener("click", () => switchTab("compose"));
+      }
       return;
     }
 
@@ -435,11 +486,11 @@ document.addEventListener("DOMContentLoaded", async () => {
       card.className = "history-card";
       card.innerHTML = `
         <div class="hist-top">
-          <span class="hist-name">${item.recipientName} (${item.company})</span>
-          <span class="hist-date">${item.date}</span>
+          <span class="hist-name">${item.recipientName || "Contact"} (${item.company || "Company"})</span>
+          <span class="hist-date">${item.date || "Recent"}</span>
         </div>
-        <div class="hist-role">${item.jobPosition}</div>
-        <div class="hist-body">${item.subject}</div>
+        <div class="hist-role">${item.jobPosition || "Outreach Pitch"}</div>
+        <div class="hist-body">${item.subject || item.body.slice(0, 80) + "..."}</div>
         <div class="hist-actions">
           <button class="hist-btn btn-load-hist" data-id="${item.id}">Load in Compose</button>
           <button class="hist-btn btn-copy-hist" data-id="${item.id}">Copy</button>
@@ -465,19 +516,30 @@ document.addEventListener("DOMContentLoaded", async () => {
 
       card.querySelector(".btn-del-hist").addEventListener("click", async () => {
         await PitchCraftStorage.deleteHistory(item.id);
-        renderHistory();
-        showToast("Pitch deleted", "info");
+        await renderHistory();
+        await updateHistoryBadge();
+        showToast("Email deleted from history", "info");
       });
 
       historyList.appendChild(card);
     });
   }
 
+  // Clear All History Handler
   btnClearHistory.addEventListener("click", async () => {
-    if (confirm("Are you sure you want to clear your outreach history?")) {
+    const history = await PitchCraftStorage.getHistory();
+    const count = Array.isArray(history) ? history.length : 0;
+
+    if (count === 0) {
+      showToast("Email history is already empty", "info");
+      return;
+    }
+
+    if (confirm(`Are you sure you want to clear all ${count} saved emails from history? This action cannot be undone.`)) {
       await PitchCraftStorage.saveHistory([]);
-      renderHistory();
-      showToast("History cleared", "info");
+      await renderHistory();
+      await updateHistoryBadge();
+      showToast("All email history cleared successfully!", "success");
     }
   });
 
@@ -573,7 +635,8 @@ document.addEventListener("DOMContentLoaded", async () => {
     showToast("Preferences and Profile saved!", "success");
   });
 
-  // Initialize initial profile data
+  // Initialize initial profile data & history badge
   loadSettings();
+  updateHistoryBadge();
 });
 

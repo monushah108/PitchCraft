@@ -46,7 +46,8 @@
       </button>
       <button class="nav-tab" data-tab="history">
         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
-        History
+        <span>History</span>
+        <span id="history-badge" class="badge-count">0</span>
       </button>
       <button class="nav-tab" data-tab="contacts">
         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>
@@ -159,13 +160,17 @@
 
           <!-- Outbox / Direct Actions -->
           <div class="action-buttons-row">
-            <button id="btn-insert-gmail" class="btn-action btn-gmail">
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M24 5.457v13.909c0 .904-.732 1.636-1.636 1.636h-3.819V11.73L12 16.64l-6.545-4.91v9.272H1.636A1.636 1.636 0 0 1 0 19.366V5.457c0-2.023 2.309-3.178 3.927-1.964L5.455 4.64 12 9.548l6.545-4.91 1.528-1.145C21.69 2.28 24 3.434 24 5.457z"/></svg>
-              <span>Insert in Gmail Tab</span>
+            <button id="btn-save-to-history-main" class="btn-action btn-save-history" title="Save this pitch into local history">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"></path><polyline points="17 21 17 13 7 13 7 21"></polyline><polyline points="7 3 7 8 15 8"></polyline></svg>
+              <span>Save to History</span>
             </button>
-            <button id="btn-open-gmail-compose" class="btn-action btn-secondary">
+            <button id="btn-insert-gmail" class="btn-action btn-gmail" title="Insert into active Gmail tab">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M24 5.457v13.909c0 .904-.732 1.636-1.636 1.636h-3.819V11.73L12 16.64l-6.545-4.91v9.272H1.636A1.636 1.636 0 0 1 0 19.366V5.457c0-2.023 2.309-3.178 3.927-1.964L5.455 4.64 12 9.548l6.545-4.91 1.528-1.145C21.69 2.28 24 3.434 24 5.457z"/></svg>
+              <span>Insert in Gmail</span>
+            </button>
+            <button id="btn-open-gmail-compose" class="btn-action btn-secondary" title="Open Gmail compose in new tab">
               <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg>
-              <span>Open in Gmail</span>
+              <span>Open Tab</span>
             </button>
           </div>
         </div>
@@ -189,7 +194,13 @@
             <h3>Outreach History</h3>
             <p class="view-subtitle">Saved drafts and generated pitches</p>
           </div>
-          <button id="btn-clear-history" class="btn-text-danger">Clear All</button>
+          <button id="btn-clear-history" class="btn-clear-history" title="Clear all saved email history">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <polyline points="3 6 5 6 21 6"></polyline>
+              <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+            </svg>
+            <span>Clear History</span>
+          </button>
         </div>
         <div id="history-list" class="history-list">
           <!-- Populated by JS -->

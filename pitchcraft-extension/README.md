@@ -79,6 +79,19 @@ In the top-right corner of the Extensions page, toggle the **Developer mode** sw
 2. Right-click and choose **"Draft Pitch with PitchCraft"**.
 3. PitchCraft opens with your selected text ready in the custom notes!
 
+### Scenario D: Managing & Clearing Email History
+1. **Auto-Save & Manual Save**:
+   - Whenever you click **"Craft Personalized Pitch"**, it is **automatically saved** into your local history so you never lose an outreach email.
+   - You can also click the prominent green **"💾 Save to History"** button in Compose at any time.
+2. **Where is History saved?**
+   - It is securely stored inside Chrome's local storage sandbox (`chrome.storage.local`) on your computer under the `"history"` key. It stays saved across restarts, browser closures, and tab changes.
+3. **Viewing & Re-using**:
+   - Click the **History** tab (which shows a live count badge, e.g., `History (4)`).
+   - Click **"Load in Compose"** to load any past pitch back into the editor, or click **"Copy"** to grab it immediately.
+4. **Clearing History**:
+   - Click the red **"Clear History"** button at the top-right of the History view to delete all saved outreach with confirmation.
+   - Or click the **"Delete"** button on any individual card to remove just that email.
+
 ---
 
 ## 📁 Extension Architecture

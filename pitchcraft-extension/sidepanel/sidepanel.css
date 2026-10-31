@@ -23,7 +23,8 @@ body {
 
 /* On narrower side panel widths, wrap rows cleanly */
 @media (max-width: 380px) {
-  .form-row {
+  .form-row,
+  .action-buttons-row {
     flex-direction: column;
     gap: 8px;
   }
