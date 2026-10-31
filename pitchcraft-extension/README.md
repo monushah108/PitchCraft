@@ -15,15 +15,21 @@
    - Hit **"Insert in Gmail Tab"** and PitchCraft communicates with your active Gmail tab, automatically filling the **Subject Line** and **Email Body** into your open compose box!
    - Quick Compose button embedded directly in Gmail's toolbar.
 
-3. **Multi-Tone & Multi-Length Engine**:
+3. **Resume Reader & Career Intelligence**:
+   - Upload your resume (**PDF**, **TXT**, or **Markdown**) or paste your resume text.
+   - Automatically detects your **Name**, **Title**, **Contact Details**, **Skills Cloud**, and **Measurable Metric Achievements**.
+   - Intelligently matches your resume's real bullet points against any target job posting on LinkedIn or job boards so outreach emails use your *real, proven accomplishments*!
+   - 1-click **"Sync to Profile"** to update your sender settings.
+
+4. **Multi-Tone & Multi-Length Engine**:
    - **Tones**: Confident, Friendly, Professional, Formal.
    - **Lengths**: Short (punchy 3-sentence hook), Medium (standard 3-paragraph), Detailed (full case with bulleted impact).
    - Zero-latency client-side AI generator built in, plus optional **OpenAI** or **Google Gemini** API integration in Settings.
 
-4. **Chrome Side Panel & Popup**:
+5. **Chrome Side Panel & Popup**:
    - Use as a lightweight **Popup** (click the toolbar icon) or dock it permanently in **Chrome's Side Panel** while you browse candidates and jobs!
 
-5. **Templates, History & Contacts**:
+6. **Templates, History & Contacts**:
    - 5 battle-tested outreach templates (Cold Application, Product Pitch, Executive Inquiry, 3-Sentence Intro, Follow-up).
    - Auto-saves all generated pitches to local history with 1-click re-copying.
    - Recruiter and lead contact manager.

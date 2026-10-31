@@ -33,6 +33,11 @@
         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 20h9"></path><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"></path></svg>
         Compose
       </button>
+      <button class="nav-tab" data-tab="resume">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line></svg>
+        <span>Resume</span>
+        <span id="resume-status-dot" class="status-dot"></span>
+      </button>
       <button class="nav-tab" data-tab="templates">
         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>
         Templates
@@ -63,6 +68,18 @@
             </svg>
             <span>Auto-fill from active tab (LinkedIn / Job)</span>
           </button>
+        </div>
+
+        <!-- Resume Intelligence Bar in Compose -->
+        <div id="resume-compose-bar" class="resume-compose-bar">
+          <div class="resume-bar-left">
+            <span class="resume-bar-icon">📄</span>
+            <div class="resume-bar-info">
+              <span id="resume-bar-title" class="resume-bar-title">No Resume Uploaded</span>
+              <span id="resume-bar-desc" class="resume-bar-desc">Upload your resume to tailor pitches with your real metrics</span>
+            </div>
+          </div>
+          <button type="button" id="btn-compose-resume-action" class="btn-resume-action">Upload Resume</button>
         </div>
 
         <form id="compose-form" class="compose-form">
@@ -159,6 +176,80 @@
               <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg>
               <span>Open Tab</span>
             </button>
+          </div>
+        </div>
+      </section>
+
+      <!-- Resume View -->
+      <section id="view-resume" class="tab-view">
+        <div class="view-header">
+          <h3>Resume & Career Intelligence</h3>
+          <p class="view-subtitle">Upload your resume to automatically tailor pitches to your real achievements</p>
+        </div>
+
+        <!-- Dropzone -->
+        <div id="resume-dropzone" class="resume-dropzone">
+          <input type="file" id="resume-file-input" accept=".pdf,.txt,.md,.doc,.docx" style="display: none;">
+          <div class="dropzone-icon">
+            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+              <polyline points="17 8 12 3 7 8"></polyline>
+              <line x1="12" y1="3" x2="12" y2="15"></line>
+            </svg>
+          </div>
+          <div class="dropzone-text">
+            <strong>Click to upload</strong> or drag & drop your resume
+          </div>
+          <div class="dropzone-sub">Supports PDF, TXT, Markdown (.pdf, .txt, .md)</div>
+        </div>
+
+        <!-- Or Paste Option -->
+        <div class="resume-toggle-paste">
+          <button type="button" id="btn-toggle-paste-resume" class="btn-link-action">
+            ✍️ Or paste resume text directly
+          </button>
+        </div>
+
+        <div id="resume-paste-box" class="resume-paste-box" style="display: none;">
+          <textarea id="resume-paste-input" rows="6" placeholder="Paste your raw resume text here..."></textarea>
+          <div class="paste-actions">
+            <button type="button" id="btn-parse-pasted-resume" class="btn-use-tpl">Parse & Save Resume</button>
+            <button type="button" id="btn-cancel-paste-resume" class="hist-btn">Cancel</button>
+          </div>
+        </div>
+
+        <!-- Parsed Resume Dashboard -->
+        <div id="resume-parsed-card" class="resume-parsed-card" style="display: none;">
+          <div class="parsed-header flex-between">
+            <div class="parsed-candidate">
+              <h4 id="parsed-candidate-name">Candidate Name</h4>
+              <span id="parsed-candidate-role" class="parsed-role">Software Engineer</span>
+            </div>
+            <div class="parsed-header-actions">
+              <button type="button" id="btn-sync-profile" class="btn-secondary-sm" title="Copy name, email and role into Settings profile">
+                Sync to Profile
+              </button>
+              <button type="button" id="btn-clear-resume" class="btn-clear-history" title="Remove resume">
+                Clear
+              </button>
+            </div>
+          </div>
+
+          <div class="parsed-contacts-row">
+            <span id="parsed-email" class="parsed-contact-item">📧 email@example.com</span>
+            <span id="parsed-phone" class="parsed-contact-item">📱 Phone</span>
+          </div>
+
+          <!-- Detected Skills Cloud -->
+          <div class="parsed-section">
+            <label class="parsed-label">Detected Skills (<span id="parsed-skills-count">0</span>)</label>
+            <div id="parsed-skills-cloud" class="skills-cloud"></div>
+          </div>
+
+          <!-- Top Highlight Accomplishments -->
+          <div class="parsed-section">
+            <label class="parsed-label">Extracted Key Achievements & Metrics</label>
+            <div id="parsed-highlights-list" class="parsed-highlights-list"></div>
           </div>
         </div>
       </section>
@@ -260,6 +351,7 @@
   </div>
 
   <script src="../shared/storage.js"></script>
+  <script src="../shared/resume-parser.js"></script>
   <script src="../shared/ai-engine.js"></script>
   <script src="../popup/popup.js"></script>
 </body>

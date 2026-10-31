@@ -171,6 +171,21 @@ body {
   color: var(--indigo-primary);
 }
 
+.status-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--text-muted);
+  display: inline-block;
+  margin-left: 2px;
+  transition: all 0.2s ease;
+}
+
+.status-dot.active {
+  background: #10b981;
+  box-shadow: 0 0 6px #10b981;
+}
+
 .badge-count {
   display: inline-flex;
   align-items: center;
@@ -232,6 +247,234 @@ body {
   background: linear-gradient(135deg, rgba(99, 102, 241, 0.25), rgba(168, 85, 247, 0.25));
   border-color: var(--indigo-primary);
   color: #ffffff;
+}
+
+/* Resume Compose Bar */
+.resume-compose-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  background: rgba(30, 41, 59, 0.6);
+  border: 1px solid rgba(99, 102, 241, 0.25);
+  border-radius: var(--radius-md);
+  padding: 8px 12px;
+  margin-bottom: 14px;
+}
+
+.resume-compose-bar.has-resume {
+  border-color: rgba(16, 185, 129, 0.4);
+  background: rgba(16, 185, 129, 0.08);
+}
+
+.resume-bar-left {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex: 1;
+  min-width: 0;
+}
+
+.resume-bar-icon {
+  font-size: 16px;
+  flex-shrink: 0;
+}
+
+.resume-bar-info {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.resume-bar-title {
+  font-size: 12px;
+  font-weight: 600;
+  color: #f1f5f9;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.resume-bar-desc {
+  font-size: 10px;
+  color: var(--text-muted);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.btn-resume-action {
+  background: var(--bg-tertiary);
+  border: 1px solid var(--border-color);
+  color: #c7d2fe;
+  font-size: 11px;
+  font-weight: 600;
+  padding: 5px 10px;
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  white-space: nowrap;
+  transition: all 0.15s ease;
+}
+
+.btn-resume-action:hover {
+  background: var(--indigo-primary);
+  color: #ffffff;
+  border-color: var(--indigo-primary);
+}
+
+/* Resume View Dropzone & Details */
+.resume-dropzone {
+  border: 2px dashed #475569;
+  background: rgba(30, 41, 59, 0.35);
+  border-radius: var(--radius-lg);
+  padding: 24px 16px;
+  text-align: center;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  margin-bottom: 12px;
+}
+
+.resume-dropzone:hover,
+.resume-dropzone.dragover {
+  border-color: var(--indigo-primary);
+  background: rgba(99, 102, 241, 0.1);
+}
+
+.dropzone-icon {
+  color: var(--indigo-primary);
+  margin-bottom: 8px;
+}
+
+.dropzone-text {
+  font-size: 13px;
+  color: #f8fafc;
+  margin-bottom: 4px;
+}
+
+.dropzone-sub {
+  font-size: 11px;
+  color: var(--text-muted);
+}
+
+.resume-toggle-paste {
+  text-align: center;
+  margin-bottom: 14px;
+}
+
+.btn-link-action {
+  background: transparent;
+  border: none;
+  color: #a5b4fc;
+  font-size: 11px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: color 0.15s;
+}
+
+.btn-link-action:hover {
+  color: #ffffff;
+  text-decoration: underline;
+}
+
+.resume-paste-box {
+  background: var(--bg-secondary);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-md);
+  padding: 12px;
+  margin-bottom: 14px;
+}
+
+.resume-paste-box textarea {
+  width: 100%;
+  margin-bottom: 8px;
+}
+
+.paste-actions {
+  display: flex;
+  gap: 8px;
+  justify-content: flex-end;
+}
+
+.resume-parsed-card {
+  background: var(--bg-secondary);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-lg);
+  padding: 14px;
+  margin-top: 10px;
+}
+
+.parsed-candidate h4 {
+  font-size: 15px;
+  font-weight: 700;
+  color: #ffffff;
+}
+
+.parsed-role {
+  font-size: 12px;
+  color: #a5b4fc;
+  font-weight: 500;
+}
+
+.parsed-header-actions {
+  display: flex;
+  gap: 6px;
+}
+
+.parsed-contacts-row {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+  font-size: 11px;
+  color: var(--text-secondary);
+  margin: 10px 0 14px 0;
+  padding-bottom: 10px;
+  border-bottom: 1px solid var(--border-color);
+}
+
+.parsed-section {
+  margin-bottom: 14px;
+}
+
+.parsed-label {
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--text-muted);
+  display: block;
+  margin-bottom: 6px;
+}
+
+.skills-cloud {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 5px;
+}
+
+.skill-tag {
+  background: rgba(99, 102, 241, 0.12);
+  border: 1px solid rgba(99, 102, 241, 0.25);
+  color: #c7d2fe;
+  font-size: 11px;
+  font-weight: 500;
+  padding: 3px 8px;
+  border-radius: 9999px;
+}
+
+.parsed-highlights-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.highlight-item {
+  background: var(--bg-primary);
+  border-left: 3px solid #10b981;
+  padding: 8px 10px;
+  border-radius: var(--radius-sm);
+  font-size: 11px;
+  color: var(--text-secondary);
+  line-height: 1.45;
 }
 
 /* Forms */

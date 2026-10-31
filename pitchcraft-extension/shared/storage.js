@@ -250,6 +250,18 @@ const Storage = {
 
   async saveDraft(draft) {
     return await this.set("draft", draft);
+  },
+
+  async getResume() {
+    return await this.get("userResume", null);
+  },
+
+  async saveResume(resumeData) {
+    return await this.set("userResume", resumeData);
+  },
+
+  async clearResume() {
+    return await this.set("userResume", null);
   }
 };
 

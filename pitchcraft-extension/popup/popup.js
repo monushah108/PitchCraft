@@ -46,10 +46,35 @@ document.addEventListener("DOMContentLoaded", async () => {
   const apiKeyGroup = document.getElementById("api-key-group");
   const settingApiKey = document.getElementById("setting-api-key");
 
+  // Resume elements
+  const resumeStatusDot = document.getElementById("resume-status-dot");
+  const resumeComposeBar = document.getElementById("resume-compose-bar");
+  const resumeBarTitle = document.getElementById("resume-bar-title");
+  const resumeBarDesc = document.getElementById("resume-bar-desc");
+  const btnComposeResumeAction = document.getElementById("btn-compose-resume-action");
+  const resumeDropzone = document.getElementById("resume-dropzone");
+  const resumeFileInput = document.getElementById("resume-file-input");
+  const btnTogglePasteResume = document.getElementById("btn-toggle-paste-resume");
+  const resumePasteBox = document.getElementById("resume-paste-box");
+  const resumePasteInput = document.getElementById("resume-paste-input");
+  const btnParsePastedResume = document.getElementById("btn-parse-pasted-resume");
+  const btnCancelPasteResume = document.getElementById("btn-cancel-paste-resume");
+  const resumeParsedCard = document.getElementById("resume-parsed-card");
+  const parsedCandidateName = document.getElementById("parsed-candidate-name");
+  const parsedCandidateRole = document.getElementById("parsed-candidate-role");
+  const parsedEmail = document.getElementById("parsed-email");
+  const parsedPhone = document.getElementById("parsed-phone");
+  const parsedSkillsCount = document.getElementById("parsed-skills-count");
+  const parsedSkillsCloud = document.getElementById("parsed-skills-cloud");
+  const parsedHighlightsList = document.getElementById("parsed-highlights-list");
+  const btnSyncProfile = document.getElementById("btn-sync-profile");
+  const btnClearResume = document.getElementById("btn-clear-resume");
+
   // State
   let selectedTone = "Confident";
   let selectedLength = "Medium";
   let userProfile = await PitchCraftStorage.getProfile();
+  let userResume = await PitchCraftStorage.getResume();
 
   // Toast Helper
   function showToast(message, type = "info") {
@@ -73,6 +98,7 @@ document.addEventListener("DOMContentLoaded", async () => {
       view.classList.toggle("active", view.id === `view-${targetTab}`);
     });
 
+    if (targetTab === "resume") renderResumeView();
     if (targetTab === "templates") renderTemplates();
     if (targetTab === "history") renderHistory();
     if (targetTab === "contacts") renderContacts();
@@ -215,6 +241,7 @@ document.addEventListener("DOMContentLoaded", async () => {
 
     try {
       userProfile = await PitchCraftStorage.getProfile();
+      userResume = await PitchCraftStorage.getResume();
       const result = await PitchCraftAI.generate({
         recipientName,
         recipientEmail,
@@ -223,7 +250,8 @@ document.addEventListener("DOMContentLoaded", async () => {
         keyHighlight,
         tone: selectedTone,
         length: selectedLength,
-        senderProfile: userProfile
+        senderProfile: userProfile,
+        resumeProfile: userResume
       });
 
       outputSubject.value = result.subject;
@@ -635,8 +663,201 @@ document.addEventListener("DOMContentLoaded", async () => {
     showToast("Preferences and Profile saved!", "success");
   });
 
-  // Initialize initial profile data & history badge
+  // 13. Resume Intelligence Controller
+  function updateResumeMatchHint() {
+    if (!userResume || !resumeBarDesc) return;
+    const pos = inputJobPosition.value.trim();
+    if (pos && typeof ResumeParser !== "undefined") {
+      const match = ResumeParser.findBestMatchForJob(userResume, pos, inputHighlights.value);
+      if (match.matchingSkills && match.matchingSkills.length > 0) {
+        resumeBarDesc.textContent = `⚡ Role matches: ${match.matchingSkills.join(", ")}`;
+        return;
+      }
+    }
+    if (userResume.skills && userResume.skills.length > 0) {
+      resumeBarDesc.textContent = `${userResume.skills.slice(0, 4).join(", ")} • ${userResume.highlights.length} achievements`;
+    }
+  }
+
+  inputJobPosition.addEventListener("input", updateResumeMatchHint);
+
+  async function renderResumeView() {
+    userResume = await PitchCraftStorage.getResume();
+
+    if (userResume) {
+      if (resumeStatusDot) resumeStatusDot.classList.add("active");
+      if (resumeComposeBar) {
+        resumeComposeBar.classList.add("has-resume");
+        resumeBarTitle.textContent = `📄 Using ${userResume.name || "Your"}'s Resume`;
+        updateResumeMatchHint();
+        btnComposeResumeAction.textContent = "View Resume";
+      }
+
+      if (resumeDropzone) resumeDropzone.style.display = "none";
+      if (resumePasteBox) resumePasteBox.style.display = "none";
+      if (btnTogglePasteResume) btnTogglePasteResume.style.display = "none";
+      if (resumeParsedCard) {
+        resumeParsedCard.style.display = "block";
+        parsedCandidateName.textContent = userResume.name || "Candidate Profile";
+        parsedCandidateRole.textContent = userResume.role || "Professional Track Record";
+        parsedEmail.textContent = userResume.email ? `📧 ${userResume.email}` : "📧 No email detected";
+        parsedPhone.textContent = userResume.phone ? `📱 ${userResume.phone}` : (userResume.portfolio ? `🔗 ${userResume.portfolio}` : "");
+
+        parsedSkillsCount.textContent = (userResume.skills || []).length;
+        parsedSkillsCloud.innerHTML = "";
+        (userResume.skills || []).forEach(skill => {
+          const tag = document.createElement("span");
+          tag.className = "skill-tag";
+          tag.textContent = skill;
+          parsedSkillsCloud.appendChild(tag);
+        });
+
+        parsedHighlightsList.innerHTML = "";
+        (userResume.highlights || []).forEach((hl, idx) => {
+          const item = document.createElement("div");
+          item.className = "highlight-item";
+          item.textContent = `${idx + 1}. ${hl}`;
+          parsedHighlightsList.appendChild(item);
+        });
+      }
+    } else {
+      if (resumeStatusDot) resumeStatusDot.classList.remove("active");
+      if (resumeComposeBar) {
+        resumeComposeBar.classList.remove("has-resume");
+        resumeBarTitle.textContent = "No Resume Uploaded";
+        resumeBarDesc.textContent = "Upload your resume to tailor pitches with your real metrics";
+        btnComposeResumeAction.textContent = "Upload Resume";
+      }
+
+      if (resumeDropzone) resumeDropzone.style.display = "block";
+      if (btnTogglePasteResume) btnTogglePasteResume.style.display = "block";
+      if (resumeParsedCard) resumeParsedCard.style.display = "none";
+      if (resumePasteBox) resumePasteBox.style.display = "none";
+    }
+  }
+
+  // Handle File Upload (PDF or Text)
+  async function handleResumeFile(file) {
+    if (!file) return;
+
+    showToast(`Reading ${file.name}...`, "info");
+    try {
+      const rawText = await ResumeParser.extractTextFromFile(file);
+      if (!rawText || rawText.trim().length < 40) {
+        throw new Error("Resume content is too short or unreadable.");
+      }
+
+      const parsed = ResumeParser.parse(rawText);
+      await PitchCraftStorage.saveResume(parsed);
+      userResume = parsed;
+      await renderResumeView();
+      showToast(`Resume for ${parsed.name} parsed successfully! (${parsed.skills.length} skills found)`, "success");
+    } catch (err) {
+      console.error(err);
+      showToast(`Could not read resume: ${err.message}`, "error");
+    }
+  }
+
+  // Dropzone events
+  if (resumeDropzone && resumeFileInput) {
+    resumeDropzone.addEventListener("click", () => resumeFileInput.click());
+
+    resumeFileInput.addEventListener("change", (e) => {
+      const file = e.target.files && e.target.files[0];
+      if (file) handleResumeFile(file);
+    });
+
+    resumeDropzone.addEventListener("dragover", (e) => {
+      e.preventDefault();
+      resumeDropzone.classList.add("dragover");
+    });
+
+    resumeDropzone.addEventListener("dragleave", () => {
+      resumeDropzone.classList.remove("dragover");
+    });
+
+    resumeDropzone.addEventListener("drop", (e) => {
+      e.preventDefault();
+      resumeDropzone.classList.remove("dragover");
+      const file = e.dataTransfer.files && e.dataTransfer.files[0];
+      if (file) handleResumeFile(file);
+    });
+  }
+
+  // Toggle Paste Option
+  if (btnTogglePasteResume && resumePasteBox) {
+    btnTogglePasteResume.addEventListener("click", () => {
+      resumePasteBox.style.display = resumePasteBox.style.display === "none" ? "block" : "none";
+    });
+  }
+
+  if (btnCancelPasteResume && resumePasteBox) {
+    btnCancelPasteResume.addEventListener("click", () => {
+      resumePasteBox.style.display = "none";
+    });
+  }
+
+  if (btnParsePastedResume && resumePasteInput) {
+    btnParsePastedResume.addEventListener("click", async () => {
+      const text = resumePasteInput.value.trim();
+      if (!text || text.length < 50) {
+        showToast("Please paste your full resume text", "error");
+        return;
+      }
+
+      try {
+        const parsed = ResumeParser.parse(text);
+        await PitchCraftStorage.saveResume(parsed);
+        userResume = parsed;
+        resumePasteInput.value = "";
+        await renderResumeView();
+        showToast(`Resume parsed! Found ${parsed.skills.length} skills and ${parsed.highlights.length} achievements.`, "success");
+      } catch (err) {
+        showToast("Failed to parse resume: " + err.message, "error");
+      }
+    });
+  }
+
+  // Sync Resume Details to Settings Profile
+  if (btnSyncProfile) {
+    btnSyncProfile.addEventListener("click", async () => {
+      if (!userResume) return;
+      const profile = await PitchCraftStorage.getProfile();
+      if (userResume.name && userResume.name !== "Candidate") profile.name = userResume.name;
+      if (userResume.email) profile.email = userResume.email;
+      if (userResume.role) profile.role = userResume.role;
+      if (userResume.portfolio) profile.portfolio = userResume.portfolio;
+      if (userResume.highlights && userResume.highlights.length > 0) {
+        profile.bio = userResume.highlights.slice(0, 2).join(" ");
+      }
+      await PitchCraftStorage.saveProfile(profile);
+      await loadSettings();
+      showToast("Synced resume name, email & achievements into Profile!", "success");
+    });
+  }
+
+  // Clear Resume
+  if (btnClearResume) {
+    btnClearResume.addEventListener("click", async () => {
+      if (confirm("Are you sure you want to remove your uploaded resume?")) {
+        await PitchCraftStorage.clearResume();
+        userResume = null;
+        await renderResumeView();
+        showToast("Resume removed", "info");
+      }
+    });
+  }
+
+  // Jump from Compose bar to Resume tab
+  if (btnComposeResumeAction) {
+    btnComposeResumeAction.addEventListener("click", () => {
+      switchTab("resume");
+    });
+  }
+
+  // Initialize initial profile data, history badge & resume view
   loadSettings();
   updateHistoryBadge();
+  renderResumeView();
 });
 

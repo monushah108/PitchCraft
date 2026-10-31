@@ -14,8 +14,24 @@ const PitchCraftAI = {
     keyHighlight = "",
     tone = "Confident",
     length = "Medium",
-    senderProfile = {}
+    senderProfile = {},
+    resumeProfile = null
   }) {
+    // If resume profile provided, find best matching accomplishments & skills
+    let enrichedHighlight = keyHighlight;
+    let resumeMatchInfo = null;
+
+    if (resumeProfile && typeof ResumeParser !== "undefined") {
+      resumeMatchInfo = ResumeParser.findBestMatchForJob(resumeProfile, jobPosition, jobDescription);
+      if (resumeMatchInfo && resumeMatchInfo.highlightSentence) {
+        if (!enrichedHighlight) {
+          enrichedHighlight = resumeMatchInfo.highlightSentence;
+        } else if (!enrichedHighlight.includes(resumeMatchInfo.highlightSentence)) {
+          enrichedHighlight = `${enrichedHighlight.trim().replace(/\.?$/, ".")} Additionally, ${resumeMatchInfo.highlightSentence}`;
+        }
+      }
+    }
+
     // If user provided custom API key, try remote LLM, else use smart built-in engine
     if (senderProfile.apiKey && senderProfile.aiProvider !== "builtin") {
       try {
@@ -25,10 +41,11 @@ const PitchCraftAI = {
           companyName,
           jobPosition,
           jobDescription,
-          keyHighlight,
+          keyHighlight: enrichedHighlight,
           tone,
           length,
-          senderProfile
+          senderProfile,
+          resumeProfile
         });
       } catch (err) {
         console.warn("Remote API error, falling back to built-in generator:", err);
@@ -41,10 +58,11 @@ const PitchCraftAI = {
       companyName,
       jobPosition,
       jobDescription,
-      keyHighlight,
+      keyHighlight: enrichedHighlight,
       tone,
       length,
-      senderProfile
+      senderProfile,
+      resumeProfile
     });
   },
 
@@ -181,8 +199,13 @@ const PitchCraftAI = {
     keyHighlight,
     tone,
     length,
-    senderProfile
+    senderProfile,
+    resumeProfile
   }) {
+    const resumeInfo = resumeProfile
+      ? `\nVerified Highlights from Candidate's Resume:\n${(resumeProfile.highlights || []).slice(0, 5).map(h => "- " + h).join("\n")}\nCandidate Skills: ${(resumeProfile.skills || []).join(", ")}`
+      : "";
+
     const prompt = `You are PitchCraft, an elite cold outreach and job application pitch generator.
 Write a personalized, high-converting outreach email based on the following details:
 
@@ -191,6 +214,7 @@ Company: ${companyName || "Company"}
 Role: ${jobPosition || "Software Engineer"}
 Job Context: ${jobDescription || "Not provided"}
 Key Highlights/Accomplishments to include: ${keyHighlight || "Full-stack engineer with 5+ yrs experience"}
+${resumeInfo}
 Desired Tone: ${tone}
 Desired Length: ${length}
 Sender Info:
