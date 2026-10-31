@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>PitchCraft — Outreach Assistant (Side Panel)</title>
+  <link rel="stylesheet" href="../popup/popup.css">
+  <link rel="stylesheet" href="sidepanel.css">
+</head>
+<body>
+  <div class="app-container">
+    <!-- Top Header -->
+    <header class="app-header">
+      <div class="brand">
+        <div class="logo-box">
+          <svg width="20" height="20" viewBox="0 0 32 32" fill="none">
+            <rect width="32" height="32" rx="7.5" fill="#4F46E5" />
+            <path d="M7.5 15.5L24.5 7.5L16.5 24.5L13.8 18.2L7.5 15.5Z" fill="#FFFFFF" stroke="#FFFFFF" stroke-width="0.5"/>
+            <path d="M24.5 7.5L13.8 18.2L17.5 18.2L24.5 7.5Z" fill="#E0E7FF"/>
+            <path d="M25 3.5C25 5 26.5 6.5 28 6.5C26.5 6.5 25 8 25 9.5C25 8 23.5 6.5 22 6.5C23.5 6.5 25 5 25 3.5Z" fill="#FCD34D"/>
+          </svg>
+        </div>
+        <div class="brand-text">
+          <span class="brand-title">PitchCraft</span>
+          <span class="brand-tag">Side Panel</span>
+        </div>
+      </div>
+    </header>
+
+    <!-- Navigation Tabs -->
+    <nav class="nav-tabs">
+      <button class="nav-tab active" data-tab="compose">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 20h9"></path><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"></path></svg>
+        Compose
+      </button>
+      <button class="nav-tab" data-tab="templates">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>
+        Templates
+      </button>
+      <button class="nav-tab" data-tab="history">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
+        History
+      </button>
+      <button class="nav-tab" data-tab="contacts">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>
+        Contacts
+      </button>
+      <button class="nav-tab" data-tab="settings">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg>
+        Settings
+      </button>
+    </nav>
+
+    <!-- Main Content Views -->
+    <main class="views-wrapper">
+      <!-- 1. Compose View -->
+      <section id="view-compose" class="tab-view active">
+        <div class="scrape-banner">
+          <button id="btn-grab-page" class="btn-scrape">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon>
+            </svg>
+            <span>Auto-fill from active tab (LinkedIn / Job)</span>
+          </button>
+        </div>
+
+        <form id="compose-form" class="compose-form">
+          <div class="form-row">
+            <div class="form-group flex-1">
+              <label>Recipient / Recruiter Name</label>
+              <input type="text" id="recipient-name" placeholder="e.g. Sarah Jenkins">
+            </div>
+            <div class="form-group flex-1">
+              <label>Recipient Email</label>
+              <input type="email" id="recipient-email" placeholder="e.g. sjenkins@stripe.com">
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group flex-1">
+              <label>Company Name</label>
+              <input type="text" id="company-name" placeholder="e.g. Stripe">
+            </div>
+            <div class="form-group flex-1">
+              <label>Target Role / Position</label>
+              <input type="text" id="job-position" placeholder="e.g. Senior Frontend Engineer">
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label>Tone of Voice</label>
+            <div class="pill-group" id="tone-group">
+              <button type="button" class="pill active" data-value="Confident">Confident</button>
+              <button type="button" class="pill" data-value="Friendly">Friendly</button>
+              <button type="button" class="pill" data-value="Professional">Professional</button>
+              <button type="button" class="pill" data-value="Formal">Formal</button>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label>Email Length</label>
+            <div class="pill-group" id="length-group">
+              <button type="button" class="pill" data-value="Short">Short</button>
+              <button type="button" class="pill active" data-value="Medium">Medium</button>
+              <button type="button" class="pill" data-value="Detailed">Detailed</button>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label>Key Accomplishments / Custom Notes</label>
+            <textarea id="key-highlights" rows="2" placeholder="e.g. Cut checkout latency 38%, lead micro-frontends..."></textarea>
+          </div>
+
+          <button type="submit" id="btn-generate" class="btn-generate">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83"></path>
+            </svg>
+            <span>Craft Personalized Pitch</span>
+          </button>
+        </form>
+
+        <div id="output-card" class="output-card">
+          <div class="output-header">
+            <span class="output-title">Generated Email Pitch</span>
+            <div class="output-tools">
+              <button id="btn-copy-pitch" class="tool-btn" title="Copy to clipboard">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
+                Copy
+              </button>
+              <button id="btn-save-draft" class="tool-btn" title="Save to History">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"></path><polyline points="17 21 17 13 7 13 7 21"></polyline><polyline points="7 3 7 8 15 8"></polyline></svg>
+                Save
+              </button>
+            </div>
+          </div>
+
+          <div class="form-group subject-group">
+            <label>Subject Line</label>
+            <input type="text" id="output-subject">
+          </div>
+
+          <div class="form-group body-group">
+            <label>Email Body</label>
+            <textarea id="output-body" rows="9"></textarea>
+          </div>
+
+          <div class="action-buttons-row">
+            <button id="btn-insert-gmail" class="btn-action btn-gmail">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M24 5.457v13.909c0 .904-.732 1.636-1.636 1.636h-3.819V11.73L12 16.64l-6.545-4.91v9.272H1.636A1.636 1.636 0 0 1 0 19.366V5.457c0-2.023 2.309-3.178 3.927-1.964L5.455 4.64 12 9.548l6.545-4.91 1.528-1.145C21.69 2.28 24 3.434 24 5.457z"/></svg>
+              <span>Insert in Gmail Tab</span>
+            </button>
+            <button id="btn-open-gmail-compose" class="btn-action btn-secondary">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg>
+              <span>Open in Gmail</span>
+            </button>
+          </div>
+        </div>
+      </section>
+
+      <!-- 2. Templates View -->
+      <section id="view-templates" class="tab-view">
+        <div class="view-header">
+          <h3>Proven Pitch Templates</h3>
+          <p class="view-subtitle">1-click battle-tested frameworks for outreach</p>
+        </div>
+        <div id="templates-list" class="templates-grid"></div>
+      </section>
+
+      <!-- 3. History View -->
+      <section id="view-history" class="tab-view">
+        <div class="view-header flex-between">
+          <div>
+            <h3>Outreach History</h3>
+            <p class="view-subtitle">Saved drafts and generated pitches</p>
+          </div>
+          <button id="btn-clear-history" class="btn-text-danger">Clear All</button>
+        </div>
+        <div id="history-list" class="history-list"></div>
+      </section>
+
+      <!-- 4. Contacts View -->
+      <section id="view-contacts" class="tab-view">
+        <div class="view-header flex-between">
+          <div>
+            <h3>Recruiters & Leads</h3>
+            <p class="view-subtitle">Quick access to frequent contacts</p>
+          </div>
+          <button id="btn-add-contact-modal" class="btn-secondary-sm">+ Add Contact</button>
+        </div>
+        <div id="contacts-list" class="contacts-list"></div>
+      </section>
+
+      <!-- 5. Settings View -->
+      <section id="view-settings" class="tab-view">
+        <div class="view-header">
+          <h3>Sender Profile & AI</h3>
+          <p class="view-subtitle">Tailor pitches to your background & skills</p>
+        </div>
+        <form id="settings-form" class="settings-form">
+          <div class="form-row">
+            <div class="form-group flex-1">
+              <label>Your Full Name</label>
+              <input type="text" id="setting-name">
+            </div>
+            <div class="form-group flex-1">
+              <label>Your Email</label>
+              <input type="email" id="setting-email">
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label>Your Professional Title / Role</label>
+            <input type="text" id="setting-role">
+          </div>
+
+          <div class="form-group">
+            <label>Your Portfolio / GitHub / LinkedIn</label>
+            <input type="text" id="setting-portfolio">
+          </div>
+
+          <div class="form-group">
+            <label>Elevator Bio / Core Background (Used in Pitches)</label>
+            <textarea id="setting-bio" rows="3"></textarea>
+          </div>
+
+          <div class="settings-divider"></div>
+
+          <div class="form-group">
+            <label>AI Provider</label>
+            <select id="setting-ai-provider" class="custom-select">
+              <option value="builtin">Built-in Smart Engine (Fast, Free, No API Key)</option>
+              <option value="openai">OpenAI (GPT-4o-mini)</option>
+              <option value="gemini">Google Gemini (Gemini 1.5 Flash)</option>
+            </select>
+          </div>
+
+          <div class="form-group" id="api-key-group" style="display: none;">
+            <label>API Key</label>
+            <input type="password" id="setting-api-key" placeholder="Enter your API Key">
+          </div>
+
+          <button type="submit" class="btn-save-profile">Save Preferences</button>
+        </form>
+      </section>
+    </main>
+
+    <div id="toast-container" class="toast-container"></div>
+  </div>
+
+  <script src="../shared/storage.js"></script>
+  <script src="../shared/ai-engine.js"></script>
+  <script src="../popup/popup.js"></script>
+</body>
+</html>
+

@@ -1,0 +1,57 @@
+{
+  "manifest_version": 3,
+  "name": "PitchCraft - AI Email Outreach & Pitch Assistant",
+  "version": "1.0.0",
+  "description": "Generate tailored job pitches, cold outreach, and follow-ups. 1-click grab job info from LinkedIn & auto-fill Gmail compose.",
+  "icons": {
+    "16": "icons/icon16.png",
+    "32": "icons/icon32.png",
+    "48": "icons/icon48.png",
+    "128": "icons/icon128.png"
+  },
+  "action": {
+    "default_popup": "popup/popup.html",
+    "default_icon": {
+      "16": "icons/icon16.png",
+      "32": "icons/icon32.png",
+      "48": "icons/icon48.png",
+      "128": "icons/icon128.png"
+    },
+    "default_title": "PitchCraft Outreach Assistant"
+  },
+  "side_panel": {
+    "default_path": "sidepanel/sidepanel.html"
+  },
+  "background": {
+    "service_worker": "background/background.js"
+  },
+  "permissions": [
+    "storage",
+    "activeTab",
+    "scripting",
+    "contextMenus",
+    "sidePanel",
+    "clipboardWrite"
+  ],
+  "host_permissions": [
+    "https://*.linkedin.com/*",
+    "https://mail.google.com/*",
+    "https://*.indeed.com/*",
+    "https://*.wellfound.com/*",
+    "https://*.glassdoor.com/*"
+  ],
+  "content_scripts": [
+    {
+      "matches": [
+        "https://*.linkedin.com/*",
+        "https://mail.google.com/*",
+        "https://*.indeed.com/*",
+        "https://*.wellfound.com/*",
+        "https://*.glassdoor.com/*"
+      ],
+      "js": ["content/content.js"],
+      "css": ["content/content.css"],
+      "run_at": "document_idle"
+    }
+  ]
+}
