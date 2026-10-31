@@ -143,7 +143,7 @@ export function DashboardView({
             </span>
           </div>
           <p className="text-sm text-slate-500">
-            Let's make your next career opportunity happen. You have{" "}
+            Let&apos;s make your next career opportunity happen. You have{" "}
             <span className="font-medium text-slate-800">16 credits remaining</span>{" "}
             this billing cycle.
           </p>

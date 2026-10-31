@@ -22,7 +22,7 @@ export function ToastContainer({ toasts, onDismiss }: ToastContainerProps) {
       {toasts.map((toast) => {
         let Icon = CheckCircle2;
         let iconColor = "text-emerald-500";
-        let borderColor = "border-slate-200";
+        const borderColor = "border-slate-200";
 
         if (toast.type === "error") {
           Icon = AlertCircle;

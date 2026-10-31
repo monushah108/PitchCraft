@@ -26,7 +26,15 @@ interface SettingsViewProps {
     creditsUsed: number;
     creditsTotal: number;
   };
-  onSaveProfile: (profile: any) => void;
+  onSaveProfile: (profile: {
+    name?: string;
+    email?: string;
+    role?: string;
+    bio?: string;
+    plan?: string;
+    creditsUsed?: number;
+    creditsTotal?: number;
+  }) => void;
   showToast: (msg: string) => void;
 }
 

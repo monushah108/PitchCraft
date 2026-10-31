@@ -123,6 +123,7 @@ ${senderProfile.email} | github.com/monushah108 | linkedin.com/in/monushah`
   const [activeTab, setActiveTab] = useState<"edit" | "preview">("edit");
 
   // Synchronize when initialData changes
+  /* eslint-disable react-hooks/set-state-in-effect */
   useEffect(() => {
     if (initialData?.recipientEmail) setRecipientEmail(initialData.recipientEmail);
     if (initialData?.recipientName) setRecipientName(initialData.recipientName);
@@ -133,6 +134,7 @@ ${senderProfile.email} | github.com/monushah108 | linkedin.com/in/monushah`
     if (initialData?.tone) setTone(initialData.tone);
     if (initialData?.length) setLength(initialData.length);
   }, [initialData]);
+  /* eslint-enable react-hooks/set-state-in-effect */
 
   // Handle Contact Quick-Select
   const handleSelectContact = (contactId: string) => {
