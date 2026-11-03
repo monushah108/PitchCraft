@@ -1,24 +1,46 @@
 /* PitchCraft Side Panel Specific Adjustments */
 
-body {
+html, body {
   width: 100% !important;
   min-width: 320px !important;
   max-width: 100% !important;
   height: 100vh !important;
   max-height: 100vh !important;
+  overflow: hidden !important;
+  margin: 0 !important;
+  padding: 0 !important;
 }
 
 .app-container {
-  height: 100%;
-  overflow-y: auto;
+  width: 100% !important;
+  height: 100vh !important;
+  max-height: 100vh !important;
+  overflow: hidden !important;
+  display: flex !important;
+  flex-direction: column !important;
+  position: relative !important;
 }
 
 .app-header {
   padding: 10px 14px;
+  flex-shrink: 0 !important;
+}
+
+.nav-tabs {
+  flex-shrink: 0 !important;
 }
 
 .views-wrapper {
-  padding: 12px 14px 24px;
+  flex: 1 !important;
+  min-height: 0 !important;
+  overflow-y: auto !important;
+  overflow-x: hidden !important;
+  padding: 12px 14px 24px !important;
+}
+
+.history-list,
+.contacts-list {
+  max-height: calc(100vh - 200px) !important;
 }
 
 /* On narrower side panel widths, wrap rows cleanly */

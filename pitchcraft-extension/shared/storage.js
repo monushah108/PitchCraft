@@ -222,6 +222,18 @@ const Storage = {
     return updated;
   },
 
+  async deleteContact(id) {
+    const contacts = await this.getContacts();
+    const updated = contacts.filter((c) => c.id !== id);
+    await this.saveContacts(updated);
+    return updated;
+  },
+
+  async clearContacts() {
+    await this.saveContacts([]);
+    return [];
+  },
+
   async getHistory() {
     return await this.get("history", DEFAULT_HISTORY);
   },

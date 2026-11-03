@@ -33,7 +33,11 @@ document.addEventListener("DOMContentLoaded", async () => {
   const historyList = document.getElementById("history-list");
   const contactsList = document.getElementById("contacts-list");
   const btnClearHistory = document.getElementById("btn-clear-history");
+  const btnClearContacts = document.getElementById("btn-clear-contacts");
   const btnAddContactModal = document.getElementById("btn-add-contact-modal");
+  const historySearchInput = document.getElementById("history-search-input");
+  const contactSearchInput = document.getElementById("contact-search-input");
+  const contactsBadge = document.getElementById("contacts-badge");
 
   // Settings
   const settingsForm = document.getElementById("settings-form");
@@ -488,7 +492,7 @@ document.addEventListener("DOMContentLoaded", async () => {
   }
 
   // 10. History Rendering
-  async function renderHistory() {
+  async function renderHistory(searchFilter = "") {
     const history = await PitchCraftStorage.getHistory();
     historyList.innerHTML = "";
     await updateHistoryBadge();
@@ -509,7 +513,24 @@ document.addEventListener("DOMContentLoaded", async () => {
       return;
     }
 
-    history.forEach((item) => {
+    let itemsToDisplay = history;
+    if (searchFilter) {
+      const q = searchFilter.toLowerCase();
+      itemsToDisplay = history.filter(
+        (item) =>
+          (item.recipientName && item.recipientName.toLowerCase().includes(q)) ||
+          (item.company && item.company.toLowerCase().includes(q)) ||
+          (item.jobPosition && item.jobPosition.toLowerCase().includes(q)) ||
+          (item.subject && item.subject.toLowerCase().includes(q))
+      );
+    }
+
+    if (itemsToDisplay.length === 0) {
+      historyList.innerHTML = `<div style="text-align:center; padding: 32px 16px; color: var(--text-muted); font-size: 12px;">No saved emails matching "${searchFilter}"</div>`;
+      return;
+    }
+
+    itemsToDisplay.forEach((item) => {
       const card = document.createElement("div");
       card.className = "history-card";
       card.innerHTML = `
@@ -544,7 +565,7 @@ document.addEventListener("DOMContentLoaded", async () => {
 
       card.querySelector(".btn-del-hist").addEventListener("click", async () => {
         await PitchCraftStorage.deleteHistory(item.id);
-        await renderHistory();
+        await renderHistory(historySearchInput ? historySearchInput.value.trim() : "");
         await updateHistoryBadge();
         showToast("Email deleted from history", "info");
       });
@@ -571,12 +592,62 @@ document.addEventListener("DOMContentLoaded", async () => {
     }
   });
 
+  // History Search Filter
+  if (historySearchInput) {
+    historySearchInput.addEventListener("input", (e) => {
+      renderHistory(e.target.value.trim());
+    });
+  }
+
+  // Contacts Badge
+  async function updateContactsBadge() {
+    if (!contactsBadge) return;
+    const contacts = await PitchCraftStorage.getContacts();
+    const count = Array.isArray(contacts) ? contacts.length : 0;
+    contactsBadge.textContent = count;
+    contactsBadge.style.display = count > 0 ? "inline-flex" : "none";
+  }
+
   // 11. Contacts Rendering
-  async function renderContacts() {
+  async function renderContacts(searchFilter = "") {
     const contacts = await PitchCraftStorage.getContacts();
     contactsList.innerHTML = "";
+    await updateContactsBadge();
 
-    contacts.forEach((contact) => {
+    if (!Array.isArray(contacts) || contacts.length === 0) {
+      contactsList.innerHTML = `
+        <div class="history-empty-state">
+          <div class="empty-icon">👥</div>
+          <div class="empty-title">No Contacts Saved</div>
+          <div class="empty-desc">Save recruiters and hiring managers to quickly pitch them anytime.</div>
+          <button type="button" class="btn-use-tpl" id="btn-empty-add-contact">+ Add First Contact</button>
+        </div>
+      `;
+      const btnEmptyAdd = document.getElementById("btn-empty-add-contact");
+      if (btnEmptyAdd) {
+        btnEmptyAdd.addEventListener("click", () => btnAddContactModal.click());
+      }
+      return;
+    }
+
+    let itemsToDisplay = contacts;
+    if (searchFilter) {
+      const q = searchFilter.toLowerCase();
+      itemsToDisplay = contacts.filter(
+        (c) =>
+          (c.name && c.name.toLowerCase().includes(q)) ||
+          (c.company && c.company.toLowerCase().includes(q)) ||
+          (c.position && c.position.toLowerCase().includes(q)) ||
+          (c.email && c.email.toLowerCase().includes(q))
+      );
+    }
+
+    if (itemsToDisplay.length === 0) {
+      contactsList.innerHTML = `<div style="text-align:center; padding: 32px 16px; color: var(--text-muted); font-size: 12px;">No contacts matching "${searchFilter}"</div>`;
+      return;
+    }
+
+    itemsToDisplay.forEach((contact) => {
       const card = document.createElement("div");
       card.className = "contact-card";
       const initials = (contact.name || "C")
@@ -592,7 +663,10 @@ document.addEventListener("DOMContentLoaded", async () => {
           <div class="contact-name">${contact.name}</div>
           <div class="contact-role">${contact.position} • ${contact.company}</div>
         </div>
-        <button class="btn-use-tpl btn-pitch-contact" data-id="${contact.id}">Pitch</button>
+        <div class="contact-actions">
+          <button class="btn-use-tpl btn-pitch-contact" data-id="${contact.id}">Pitch</button>
+          <button class="hist-btn btn-del-contact" data-id="${contact.id}" style="color: #f87171;" title="Delete contact">✕</button>
+        </div>
       `;
 
       card.querySelector(".btn-pitch-contact").addEventListener("click", () => {
@@ -604,7 +678,41 @@ document.addEventListener("DOMContentLoaded", async () => {
         showToast(`Drafting pitch for ${contact.name}`, "info");
       });
 
+      card.querySelector(".btn-del-contact").addEventListener("click", async () => {
+        await PitchCraftStorage.deleteContact(contact.id);
+        await renderContacts(contactSearchInput ? contactSearchInput.value.trim() : "");
+        await updateContactsBadge();
+        showToast(`Contact ${contact.name} removed`, "info");
+      });
+
       contactsList.appendChild(card);
+    });
+  }
+
+  // Clear All Contacts Handler
+  if (btnClearContacts) {
+    btnClearContacts.addEventListener("click", async () => {
+      const contacts = await PitchCraftStorage.getContacts();
+      const count = Array.isArray(contacts) ? contacts.length : 0;
+
+      if (count === 0) {
+        showToast("Contacts list is already empty", "info");
+        return;
+      }
+
+      if (confirm(`Are you sure you want to clear all ${count} contacts? This action cannot be undone.`)) {
+        await PitchCraftStorage.clearContacts();
+        await renderContacts();
+        await updateContactsBadge();
+        showToast("All contacts cleared successfully!", "success");
+      }
+    });
+  }
+
+  // Contact Search Filter
+  if (contactSearchInput) {
+    contactSearchInput.addEventListener("input", (e) => {
+      renderContacts(e.target.value.trim());
     });
   }
 
@@ -626,6 +734,7 @@ document.addEventListener("DOMContentLoaded", async () => {
 
     await PitchCraftStorage.addContact(newContact);
     renderContacts();
+    await updateContactsBadge();
     showToast(`Added ${name} to contacts!`, "success");
   });
 
@@ -855,9 +964,10 @@ document.addEventListener("DOMContentLoaded", async () => {
     });
   }
 
-  // Initialize initial profile data, history badge & resume view
+  // Initialize initial profile data, history badge, contacts badge & resume view
   loadSettings();
   updateHistoryBadge();
+  updateContactsBadge();
   renderResumeView();
 });
 
