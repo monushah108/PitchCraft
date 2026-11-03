@@ -207,6 +207,38 @@ const Storage = {
     return await this.set("templates", templates);
   },
 
+  async saveTemplate(template) {
+    const templates = await this.getTemplates();
+    const index = templates.findIndex((t) => t.id === template.id);
+    let updated;
+    if (index >= 0) {
+      updated = [...templates];
+      updated[index] = { ...updated[index], ...template, updatedAt: Date.now() };
+    } else {
+      const newTemplate = {
+        ...template,
+        id: template.id || "tpl-custom-" + Date.now(),
+        isCustom: true,
+        createdAt: Date.now()
+      };
+      updated = [newTemplate, ...templates];
+    }
+    await this.saveTemplates(updated);
+    return updated;
+  },
+
+  async deleteTemplate(id) {
+    const templates = await this.getTemplates();
+    const updated = templates.filter((t) => t.id !== id);
+    await this.saveTemplates(updated);
+    return updated;
+  },
+
+  async resetDefaultTemplates() {
+    await this.saveTemplates(DEFAULT_TEMPLATES);
+    return DEFAULT_TEMPLATES;
+  },
+
   async getContacts() {
     return await this.get("contacts", DEFAULT_CONTACTS);
   },
@@ -279,5 +311,8 @@ const Storage = {
 
 if (typeof window !== "undefined") {
   window.PitchCraftStorage = Storage;
+}
+if (typeof module !== "undefined" && module.exports) {
+  module.exports = Storage;
 }
 

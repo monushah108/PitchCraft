@@ -257,10 +257,105 @@
 
       <!-- 2. Templates View -->
       <section id="view-templates" class="tab-view">
-        <div class="view-header">
-          <h3>Proven Pitch Templates</h3>
-          <p class="view-subtitle">1-click battle-tested frameworks for outreach</p>
+        <div class="view-header flex-between">
+          <div>
+            <h3>Pitch Templates</h3>
+            <p class="view-subtitle">Battle-tested & custom outreach frameworks</p>
+          </div>
+          <button type="button" id="btn-toggle-template-builder" class="btn-secondary-sm" title="Create your own outreach template">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+            <span id="btn-builder-label">+ New Template</span>
+          </button>
         </div>
+
+        <!-- Custom Template Builder Form (Collapsible) -->
+        <div id="template-builder-card" class="template-builder-card" style="display: none;">
+          <div class="builder-header">
+            <span id="builder-card-title" class="builder-title">Create Custom Template</span>
+            <button type="button" id="btn-close-builder" class="builder-close-btn" title="Cancel">✕</button>
+          </div>
+
+          <form id="template-builder-form" class="template-builder-form">
+            <input type="hidden" id="builder-template-id" value="">
+
+            <div class="form-row">
+              <div class="form-group flex-1">
+                <label>Template Title</label>
+                <input type="text" id="builder-title-input" placeholder="e.g. Founder DM — Value First" required>
+              </div>
+              <div class="form-group flex-1">
+                <label>Category</label>
+                <select id="builder-category-select">
+                  <option value="Cold Outreach">Cold Outreach</option>
+                  <option value="Job Application">Job Application</option>
+                  <option value="Follow-up">Follow-up</option>
+                  <option value="Networking">Networking</option>
+                  <option value="Executive">Executive</option>
+                  <option value="Freelance">Freelance</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="form-row">
+              <div class="form-group flex-1">
+                <label>Tone</label>
+                <select id="builder-tone-select">
+                  <option value="Confident">Confident</option>
+                  <option value="Friendly">Friendly</option>
+                  <option value="Professional" selected>Professional</option>
+                  <option value="Formal">Formal</option>
+                </select>
+              </div>
+              <div class="form-group flex-1">
+                <label>Length</label>
+                <select id="builder-length-select">
+                  <option value="Short">Short</option>
+                  <option value="Medium" selected>Medium</option>
+                  <option value="Detailed">Detailed</option>
+                </select>
+              </div>
+            </div>
+
+            <!-- Quick Variable Inserters -->
+            <div class="builder-vars-section">
+              <span class="builder-vars-label">Click placeholder to insert at cursor:</span>
+              <div class="var-pills-row">
+                <button type="button" class="btn-var-pill" data-var="{{recipientName}}">{{recipientName}}</button>
+                <button type="button" class="btn-var-pill" data-var="{{companyName}}">{{companyName}}</button>
+                <button type="button" class="btn-var-pill" data-var="{{jobPosition}}">{{jobPosition}}</button>
+                <button type="button" class="btn-var-pill" data-var="{{keyHighlight}}">{{keyHighlight}}</button>
+                <button type="button" class="btn-var-pill" data-var="{{senderName}}">{{senderName}}</button>
+                <button type="button" class="btn-var-pill" data-var="{{senderEmail}}">{{senderEmail}}</button>
+                <button type="button" class="btn-var-pill" data-var="{{senderPortfolio}}">{{senderPortfolio}}</button>
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label>Subject Line Template</label>
+              <input type="text" id="builder-subject-input" placeholder="e.g. Application: {{jobPosition}} — {{senderName}}" required>
+            </div>
+
+            <div class="form-group">
+              <label>Email Body Template</label>
+              <textarea id="builder-body-input" rows="6" placeholder="Hi {{recipientName}},\n\nI love what {{companyName}} is building in..." required></textarea>
+            </div>
+
+            <div class="builder-actions-row">
+              <button type="submit" id="btn-save-template" class="btn-primary-sm">Save Template</button>
+              <button type="button" id="btn-cancel-builder" class="btn-secondary-sm">Cancel</button>
+            </div>
+          </form>
+        </div>
+
+        <!-- Filter tabs for templates -->
+        <div class="template-filter-bar">
+          <button type="button" class="tpl-filter-pill active" data-filter="all">All</button>
+          <button type="button" class="tpl-filter-pill" data-filter="custom">Custom</button>
+          <button type="button" class="tpl-filter-pill" data-filter="Job Application">Job Application</button>
+          <button type="button" class="tpl-filter-pill" data-filter="Cold Outreach">Cold Outreach</button>
+          <button type="button" class="tpl-filter-pill" data-filter="Follow-up">Follow-up</button>
+        </div>
+
         <div id="templates-list" class="templates-grid"></div>
       </section>
 
@@ -271,13 +366,23 @@
             <h3>Outreach History</h3>
             <p class="view-subtitle">Saved drafts and generated pitches</p>
           </div>
-          <button id="btn-clear-history" class="btn-clear-history" title="Clear all saved email history">
-            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <polyline points="3 6 5 6 21 6"></polyline>
-              <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
-            </svg>
-            <span>Clear History</span>
-          </button>
+          <div class="header-btns-group">
+            <button id="btn-export-history-csv" class="btn-secondary-sm" title="Export email history to CSV file">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                <polyline points="7 10 12 15 17 10"></polyline>
+                <line x1="12" y1="15" x2="12" y2="3"></line>
+              </svg>
+              <span>Export CSV</span>
+            </button>
+            <button id="btn-clear-history" class="btn-clear-history" title="Clear all saved email history">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <polyline points="3 6 5 6 21 6"></polyline>
+                <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+              </svg>
+              <span>Clear</span>
+            </button>
+          </div>
         </div>
         <div class="search-box-container">
           <input type="text" id="history-search-input" placeholder="🔍 Search emails by name, company, or subject...">
@@ -293,13 +398,21 @@
             <p class="view-subtitle">Quick access to frequent contacts</p>
           </div>
           <div class="header-btns-group">
-            <button id="btn-add-contact-modal" class="btn-secondary-sm">+ Add Contact</button>
+            <button id="btn-add-contact-modal" class="btn-secondary-sm">+ Add</button>
+            <button id="btn-export-contacts-csv" class="btn-secondary-sm" title="Export contacts to CSV file">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                <polyline points="7 10 12 15 17 10"></polyline>
+                <line x1="12" y1="15" x2="12" y2="3"></line>
+              </svg>
+              <span>Export CSV</span>
+            </button>
             <button id="btn-clear-contacts" class="btn-clear-history" title="Clear all contacts">
               <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                 <polyline points="3 6 5 6 21 6"></polyline>
                 <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
               </svg>
-              <span>Clear Contacts</span>
+              <span>Clear</span>
             </button>
           </div>
         </div>

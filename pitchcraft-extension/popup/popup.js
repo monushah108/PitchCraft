@@ -39,6 +39,27 @@ document.addEventListener("DOMContentLoaded", async () => {
   const contactSearchInput = document.getElementById("contact-search-input");
   const contactsBadge = document.getElementById("contacts-badge");
 
+  // Template builder elements
+  const btnToggleTemplateBuilder = document.getElementById("btn-toggle-template-builder");
+  const btnBuilderLabel = document.getElementById("btn-builder-label");
+  const templateBuilderCard = document.getElementById("template-builder-card");
+  const builderCardTitle = document.getElementById("builder-card-title");
+  const btnCloseBuilder = document.getElementById("btn-close-builder");
+  const btnCancelBuilder = document.getElementById("btn-cancel-builder");
+  const templateBuilderForm = document.getElementById("template-builder-form");
+  const builderTemplateId = document.getElementById("builder-template-id");
+  const builderTitleInput = document.getElementById("builder-title-input");
+  const builderCategorySelect = document.getElementById("builder-category-select");
+  const builderToneSelect = document.getElementById("builder-tone-select");
+  const builderLengthSelect = document.getElementById("builder-length-select");
+  const builderSubjectInput = document.getElementById("builder-subject-input");
+  const builderBodyInput = document.getElementById("builder-body-input");
+  const tplFilterPills = document.querySelectorAll(".tpl-filter-pill");
+
+  // CSV export elements
+  const btnExportHistoryCsv = document.getElementById("btn-export-history-csv");
+  const btnExportContactsCsv = document.getElementById("btn-export-contacts-csv");
+
   // Settings
   const settingsForm = document.getElementById("settings-form");
   const settingName = document.getElementById("setting-name");
@@ -427,26 +448,211 @@ document.addEventListener("DOMContentLoaded", async () => {
   }
   btnOpenGmailCompose.addEventListener("click", openInGmailUrl);
 
-  // 9. Templates Rendering
+  // 9. Templates Rendering & Custom Template Builder
+  let activeTemplateFilter = "all";
+  let lastActiveField = null;
+
+  if (builderSubjectInput) {
+    builderSubjectInput.addEventListener("focus", () => {
+      lastActiveField = builderSubjectInput;
+    });
+  }
+  if (builderBodyInput) {
+    builderBodyInput.addEventListener("focus", () => {
+      lastActiveField = builderBodyInput;
+    });
+  }
+
+  function insertPlaceholder(targetField, placeholder) {
+    const field = targetField || builderBodyInput;
+    if (!field) return;
+    const start = field.selectionStart || 0;
+    const end = field.selectionEnd || 0;
+    const current = field.value || "";
+    field.value = current.substring(0, start) + placeholder + current.substring(end);
+    field.focus();
+    field.selectionStart = field.selectionEnd = start + placeholder.length;
+  }
+
+  document.querySelectorAll(".btn-var-pill").forEach((btn) => {
+    btn.addEventListener("click", () => {
+      const placeholder = btn.dataset.var;
+      insertPlaceholder(lastActiveField, placeholder);
+    });
+  });
+
+  function openTemplateBuilder(templateToEdit = null) {
+    if (!templateBuilderCard) return;
+    templateBuilderCard.style.display = "block";
+
+    if (templateToEdit) {
+      if (builderCardTitle) builderCardTitle.textContent = "Edit Template";
+      if (builderTemplateId) builderTemplateId.value = templateToEdit.id;
+      if (builderTitleInput) builderTitleInput.value = templateToEdit.title || "";
+      if (builderCategorySelect) builderCategorySelect.value = templateToEdit.category || "Cold Outreach";
+      if (builderToneSelect) builderToneSelect.value = templateToEdit.tone || "Professional";
+      if (builderLengthSelect) builderLengthSelect.value = templateToEdit.length || "Medium";
+      if (builderSubjectInput) builderSubjectInput.value = templateToEdit.subject || "";
+      if (builderBodyInput) builderBodyInput.value = templateToEdit.body || "";
+      if (btnBuilderLabel) btnBuilderLabel.textContent = "Editing Template";
+    } else {
+      if (builderCardTitle) builderCardTitle.textContent = "Create Custom Template";
+      if (templateBuilderForm) templateBuilderForm.reset();
+      if (builderTemplateId) builderTemplateId.value = "";
+      if (builderCategorySelect) builderCategorySelect.value = "Cold Outreach";
+      if (builderToneSelect) builderToneSelect.value = "Professional";
+      if (builderLengthSelect) builderLengthSelect.value = "Medium";
+      if (btnBuilderLabel) btnBuilderLabel.textContent = "Close Builder";
+    }
+
+    templateBuilderCard.scrollIntoView({ behavior: "smooth" });
+  }
+
+  function closeTemplateBuilder() {
+    if (!templateBuilderCard) return;
+    templateBuilderCard.style.display = "none";
+    if (templateBuilderForm) templateBuilderForm.reset();
+    if (builderTemplateId) builderTemplateId.value = "";
+    if (btnBuilderLabel) btnBuilderLabel.textContent = "+ New Template";
+  }
+
+  if (btnToggleTemplateBuilder) {
+    btnToggleTemplateBuilder.addEventListener("click", () => {
+      if (templateBuilderCard.style.display === "none" || !templateBuilderCard.style.display) {
+        openTemplateBuilder();
+      } else {
+        closeTemplateBuilder();
+      }
+    });
+  }
+
+  if (btnCloseBuilder) btnCloseBuilder.addEventListener("click", closeTemplateBuilder);
+  if (btnCancelBuilder) btnCancelBuilder.addEventListener("click", closeTemplateBuilder);
+
+  if (templateBuilderForm) {
+    templateBuilderForm.addEventListener("submit", async (e) => {
+      e.preventDefault();
+      const title = builderTitleInput ? builderTitleInput.value.trim() : "";
+      const category = builderCategorySelect ? builderCategorySelect.value : "Cold Outreach";
+      const tone = builderToneSelect ? builderToneSelect.value : "Professional";
+      const length = builderLengthSelect ? builderLengthSelect.value : "Medium";
+      const subject = builderSubjectInput ? builderSubjectInput.value.trim() : "";
+      const body = builderBodyInput ? builderBodyInput.value.trim() : "";
+      const id = builderTemplateId ? builderTemplateId.value.trim() : "";
+
+      if (!title || !subject || !body) {
+        showToast("Please fill in template title, subject and body", "error");
+        return;
+      }
+
+      const templateData = {
+        id: id || undefined,
+        title,
+        category,
+        tone,
+        length,
+        subject,
+        body,
+        isCustom: true
+      };
+
+      await PitchCraftStorage.saveTemplate(templateData);
+      closeTemplateBuilder();
+      await renderTemplates();
+      showToast(id ? `Template "${title}" updated!` : `Custom template "${title}" created!`, "success");
+    });
+  }
+
+  // Filter tabs
+  tplFilterPills.forEach((pill) => {
+    pill.addEventListener("click", () => {
+      tplFilterPills.forEach((p) => p.classList.remove("active"));
+      pill.classList.add("active");
+      activeTemplateFilter = pill.dataset.filter || "all";
+      renderTemplates();
+    });
+  });
+
   async function renderTemplates() {
     const templates = await PitchCraftStorage.getTemplates();
     templatesList.innerHTML = "";
 
-    templates.forEach((tpl) => {
+    let filtered = templates;
+    if (activeTemplateFilter === "custom") {
+      filtered = templates.filter((t) => t.isCustom);
+    } else if (activeTemplateFilter !== "all") {
+      filtered = templates.filter(
+        (t) => (t.category || "").toLowerCase() === activeTemplateFilter.toLowerCase()
+      );
+    }
+
+    if (filtered.length === 0) {
+      templatesList.innerHTML = `
+        <div style="text-align: center; padding: 32px 14px; color: var(--text-muted); font-size: 12px;">
+          No templates found in "${activeTemplateFilter}". Click "+ New Template" to create one!
+        </div>
+      `;
+      return;
+    }
+
+    filtered.forEach((tpl) => {
       const card = document.createElement("div");
       card.className = "template-card";
+
+      const isCustom = Boolean(tpl.isCustom);
+      const tagHtml = isCustom
+        ? `<div class="tpl-tags-group"><span class="tpl-tag tpl-tag-custom">Custom</span><span class="tpl-tag">${tpl.category || "Outreach"}</span></div>`
+        : `<span class="tpl-tag">${tpl.category || "Built-in"}</span>`;
+
+      const actionsHtml = isCustom
+        ? `
+          <div class="tpl-card-actions">
+            <button type="button" class="tpl-icon-btn btn-edit-tpl" title="Edit template">✏️</button>
+            <button type="button" class="tpl-icon-btn danger btn-del-tpl" title="Delete template">🗑️</button>
+            <button type="button" class="btn-use-tpl" data-id="${tpl.id}">Use Template</button>
+          </div>
+        `
+        : `
+          <div class="tpl-card-actions">
+            <button type="button" class="btn-use-tpl" data-id="${tpl.id}">Use Template</button>
+          </div>
+        `;
+
       card.innerHTML = `
         <div class="tpl-header">
           <span class="tpl-title">${tpl.title}</span>
-          <span class="tpl-tag">${tpl.category}</span>
+          ${tagHtml}
         </div>
-        <div class="tpl-preview">${tpl.subject}\n${tpl.body.slice(0, 120)}...</div>
-        <button class="btn-use-tpl" data-id="${tpl.id}">Use Template</button>
+        <div class="tpl-preview">${tpl.subject}\n${tpl.body.slice(0, 130)}...</div>
+        <div class="tpl-footer">
+          <span class="tpl-meta">${tpl.tone || "Professional"} • ${tpl.length || "Medium"}</span>
+          ${actionsHtml}
+        </div>
       `;
 
       card.querySelector(".btn-use-tpl").addEventListener("click", () => {
         applyTemplate(tpl);
       });
+
+      if (isCustom) {
+        const btnEdit = card.querySelector(".btn-edit-tpl");
+        if (btnEdit) {
+          btnEdit.addEventListener("click", () => {
+            openTemplateBuilder(tpl);
+          });
+        }
+
+        const btnDel = card.querySelector(".btn-del-tpl");
+        if (btnDel) {
+          btnDel.addEventListener("click", async () => {
+            if (confirm(`Are you sure you want to delete custom template "${tpl.title}"?`)) {
+              await PitchCraftStorage.deleteTemplate(tpl.id);
+              await renderTemplates();
+              showToast(`Template "${tpl.title}" deleted`, "info");
+            }
+          });
+        }
+      }
 
       templatesList.appendChild(card);
     });
@@ -574,6 +780,71 @@ document.addEventListener("DOMContentLoaded", async () => {
     });
   }
 
+  // CSV Export Utility
+  function escapeCSVField(val) {
+    if (val === null || val === undefined) return '""';
+    const str = String(val).replace(/"/g, '""');
+    return `"${str}"`;
+  }
+
+  function downloadCSV(filename, csvContent) {
+    const blob = new Blob(["\uFEFF" + csvContent], { type: "text/csv;charset=utf-8;" });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement("a");
+    link.setAttribute("href", url);
+    link.setAttribute("download", filename);
+    link.style.visibility = "hidden";
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    URL.revokeObjectURL(url);
+  }
+
+  // Export History CSV
+  if (btnExportHistoryCsv) {
+    btnExportHistoryCsv.addEventListener("click", async () => {
+      const history = await PitchCraftStorage.getHistory();
+      if (!Array.isArray(history) || history.length === 0) {
+        showToast("No email history to export yet", "info");
+        return;
+      }
+
+      const headers = [
+        "Date",
+        "Recipient Name",
+        "Recipient Email",
+        "Company",
+        "Job Position",
+        "Tone",
+        "Length",
+        "Subject",
+        "Body",
+        "Status"
+      ];
+
+      const rows = history.map((item) => [
+        item.date || "",
+        item.recipientName || "",
+        item.recipientEmail || "",
+        item.company || "",
+        item.jobPosition || "",
+        item.tone || "",
+        item.length || "",
+        item.subject || "",
+        item.body || "",
+        item.status || "Draft"
+      ]);
+
+      const csvContent = [headers, ...rows]
+        .map((row) => row.map(escapeCSVField).join(","))
+        .join("\r\n");
+
+      const dateStr = new Date().toISOString().split("T")[0];
+      downloadCSV(`pitchcraft-outreach-history-${dateStr}.csv`, csvContent);
+      showToast(`Exported ${history.length} email records to CSV!`, "success");
+    });
+  }
+
   // Clear All History Handler
   btnClearHistory.addEventListener("click", async () => {
     const history = await PitchCraftStorage.getHistory();
@@ -686,6 +957,34 @@ document.addEventListener("DOMContentLoaded", async () => {
       });
 
       contactsList.appendChild(card);
+    });
+  }
+
+  // Export Contacts CSV
+  if (btnExportContactsCsv) {
+    btnExportContactsCsv.addEventListener("click", async () => {
+      const contacts = await PitchCraftStorage.getContacts();
+      if (!Array.isArray(contacts) || contacts.length === 0) {
+        showToast("No contacts to export yet", "info");
+        return;
+      }
+
+      const headers = ["Name", "Email", "Company", "Position", "Notes"];
+      const rows = contacts.map((c) => [
+        c.name || "",
+        c.email || "",
+        c.company || "",
+        c.position || "",
+        c.notes || ""
+      ]);
+
+      const csvContent = [headers, ...rows]
+        .map((row) => row.map(escapeCSVField).join(","))
+        .join("\r\n");
+
+      const dateStr = new Date().toISOString().split("T")[0];
+      downloadCSV(`pitchcraft-contacts-${dateStr}.csv`, csvContent);
+      showToast(`Exported ${contacts.length} contacts to CSV!`, "success");
     });
   }
 
